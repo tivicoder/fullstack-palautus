@@ -1,0 +1,19 @@
+Title New Note SPA
+
+note over selain:
+selain lisää uuden noten muistissa olevien
+joukkoon ja renderöi ne näytölle
+end note
+
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+
+note over palvelin:
+Palvelin lisää uuden noten tietokantaansa
+end note
+
+palvelin-->selain: {"message":"note created"}
+
+note over selain:
+Selain ajaa tapahtumankäsittelijän
+joka tulostaa vastauksen consoliin
+end note
