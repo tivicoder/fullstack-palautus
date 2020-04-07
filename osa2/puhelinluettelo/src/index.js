@@ -10,32 +10,43 @@ const App = () => {
   ])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
+  const [ filter, setFilter ] = useState('')
 
   const submitPressed = (event) => {
     event.preventDefault()
-    // console.log('check if ', persons, 'contains ', {name: newName})
     if (persons.some((elem) => elem.name === newName)){
       alert(`${newName} is already added to phonebook`)
       return
     }
+
     setPersons(persons.concat({name: newName, number: newNumber}))
     setNewName("")
     setNewNumber("")
   }
 
   const handleNewNameChange = (event) => {
-    // console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const handleNewNumberChange = (event) => {
-    // console.log(event.target.value)
     setNewNumber(event.target.value)
+  }
+
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value)
+  }
+
+  const filteredPersons = () => {
+    return persons.filter(person => person.name.toLowerCase().startsWith(filter.toLowerCase()))
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>
+        filter shown with <input value={filter} onChange={handleFilterChange} />
+      </div>
+      <h2>Add a new</h2>
       <form onSubmit={submitPressed}>
         <div> name: <input value={newName} onChange={handleNewNameChange}/> </div>
         <div> number: <input value={newNumber} onChange={handleNewNumberChange} /></div>
@@ -44,7 +55,7 @@ const App = () => {
       <h2>Numbers</h2>
       <table>
         <tbody>
-          {persons.map(elem =>
+          {filteredPersons().map(elem =>
             <tr key={elem.name}>
               <td>{elem.name}</td><td>{elem.number}</td> 
             </tr>)}
@@ -52,7 +63,6 @@ const App = () => {
       </table>
     </div>
   )
-
 }
 
 ReactDOM.render(
