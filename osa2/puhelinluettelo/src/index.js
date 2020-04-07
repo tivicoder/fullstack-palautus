@@ -36,32 +36,67 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  return (
+    <div>
+
+      <h2>Phonebook</h2>
+      <Filter filter={filter} filterChangeHandler={handleFilterChange} />
+
+      <h3>Add a new</h3>
+      <PersonForm
+        submitPressed={submitPressed}
+        newName={newName}
+        handleNewNameChange={handleNewNameChange}
+        newNumber={newNumber}
+        handleNewNumberChange={handleNewNumberChange}
+      />
+
+      <h3>Numbers</h3>
+      <Persons persons={persons} filter={filter} />
+
+    </div>
+  )
+}
+
+const Filter = ({filter, filterChangeHandler}) => {
+  return (
+    <div>
+      filter shown with <input value={filter} onChange={filterChangeHandler} />
+    </div>
+  )
+}
+
+const PersonForm = ({submitPressed, newName, handleNewNameChange, newNumber, handleNewNumberChange}) => {
+  return (
+    <form onSubmit={submitPressed}>
+      <div> name: <input value={newName} onChange={handleNewNameChange}/> </div>
+      <div> number: <input value={newNumber} onChange={handleNewNumberChange} /></div>
+      <div> <button type="submit">add</button> </div>
+    </form>
+  )
+}
+
+const Persons = ({persons, filter}) => {
   const filteredPersons = () => {
     return persons.filter(person => person.name.toLowerCase().startsWith(filter.toLowerCase()))
   }
 
   return (
-    <div>
-      <h2>Phonebook</h2>
-      <div>
-        filter shown with <input value={filter} onChange={handleFilterChange} />
-      </div>
-      <h2>Add a new</h2>
-      <form onSubmit={submitPressed}>
-        <div> name: <input value={newName} onChange={handleNewNameChange}/> </div>
-        <div> number: <input value={newNumber} onChange={handleNewNumberChange} /></div>
-        <div> <button type="submit">add</button> </div>
-      </form>
-      <h2>Numbers</h2>
-      <table>
-        <tbody>
-          {filteredPersons().map(elem =>
-            <tr key={elem.name}>
-              <td>{elem.name}</td><td>{elem.number}</td> 
-            </tr>)}
-        </tbody>
-      </table>
-    </div>
+    <table>
+      <tbody>
+        {filteredPersons().map(elem =>
+          <Person key={elem.name} name={elem.name} number={elem.number}/>)
+        }
+      </tbody>
+    </table>
+  )
+}
+
+const Person = ({name, number}) => {
+  return (
+    <tr>
+      <td>{name}</td><td>{number}</td>
+    </tr>
   )
 }
 
