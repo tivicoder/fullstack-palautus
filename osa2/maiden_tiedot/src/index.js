@@ -19,21 +19,30 @@ const App = () => {
   return (
     <div>
       find countries <input value={filter} onChange={filterChanged}/>
-      <CountryList filter={filter} countries={countries} />
+      <CountryList filter={filter} setFilter={setFilter} countries={countries} />
     </div>
   )
 }
 
-const CountryList = ({filter, countries}) => {
+const CountryList = ({filter, setFilter, countries}) => {
+  const showCountryPressed = (event) => {
+    console.log('pressed ', event.target.id)
+    setFilter(event.target.id)
+  }
+
   const filteredCountries = () => {
     const filteredCountries = countries.filter(country =>
-      country.name.toLowerCase().startsWith(filter.toLowerCase()))
+      country.name.toLowerCase().includes(filter.toLowerCase()))
     if (filteredCountries.length > 10) {
       return "Too many matches, specify another filter"
     } else if (filteredCountries.length === 1) {
       return <Country country={filteredCountries[0]} />
     } else {
-      return filteredCountries.map((country) => <div key={country.name}> {country.name} </div>)
+      return filteredCountries.map((country) => { return (
+        <div key={country.name}>
+          {country.name} <button id={country.name} onClick={showCountryPressed}>view</button>
+        </div> )
+      })
     }
   }
 
