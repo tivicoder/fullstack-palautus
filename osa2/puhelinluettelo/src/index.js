@@ -33,11 +33,9 @@ const App = () => {
   }
 
   useEffect(() => {
-    console.log('useEffect')
     axios
       .get("http://localhost:3001/persons")
       .then(response => {
-        console.log('axios.get returned ', response.data)
         setPersons(response.data)
       })
   }, [])
@@ -84,7 +82,7 @@ const PersonForm = ({submitPressed, newName, handleNewNameChange, newNumber, han
 
 const Persons = ({persons, filter}) => {
   const filteredPersons = () => {
-    return persons.filter(person => person.name.toLowerCase().startsWith(filter.toLowerCase()))
+    return persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
   }
 
   return (
