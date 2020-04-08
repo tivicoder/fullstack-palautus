@@ -64,12 +64,38 @@ const Country = ({country}) => {
 
   return (
     <div>
-      <h1>{country.name}</h1>
+      <h2>{country.name}</h2>
       <div>capital {country.capital}</div>
       <div>population {country.population}</div>
-      <h2> languages</h2>
+      <h3> languages</h3>
       {languageList()}
       <img src={country.flag} alt="flag" width="100"/>
+      <Weather country={country} />
+    </div>
+  )
+}
+
+const Weather = ({country}) => {
+  const [weather, setWeather] = useState()
+
+  useEffect (() => {
+    const api_key = process.env.REACT_APP_API_KEY
+    axios
+      .get(`http://api.weatherstack.com/current?access_key=${api_key}&query=${country.name}`)
+      .then(response => {
+        console.log("got weather: ", response.data)
+        setWeather(response.data)
+      })
+  }, [country.name])
+
+  return !weather ? "" : (
+    <div>
+      <h3>Weather in {weather.location.name} </h3>
+      <div><b>temperature: </b>{weather.current.temperature} celsius</div>
+      {weather.current.weather_icons.map(iconUrl => { return(
+        <img key={iconUrl} src={iconUrl} alt="weather icon" width="50"/>
+        )})}
+      <div><b>wind: </b>{weather.current.wind_speed} kph direction {weather.current.wind_dir}</div>
     </div>
   )
 }
