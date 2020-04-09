@@ -33,6 +33,14 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const removePerson = (id) => {
+    if (window.confirm(`Delete ${persons.filter(person => person.id === id)[0].name} ?`)) {
+      numberService
+        .remove(id)
+        .then(setPersons(persons.filter(person => person.id !== id)))
+    }
+  }
+
   useEffect(() => {
     numberService
       .getAll()
@@ -57,7 +65,7 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons persons={persons} filter={filter} />
+      <Persons persons={persons} filter={filter} removePerson={removePerson} />
 
     </div>
   )
@@ -81,7 +89,7 @@ const PersonForm = ({submitPressed, newName, handleNewNameChange, newNumber, han
   )
 }
 
-const Persons = ({persons, filter}) => {
+const Persons = ({persons, filter, removePerson}) => {
   const filteredPersons = () => {
     return persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
   }
@@ -90,17 +98,20 @@ const Persons = ({persons, filter}) => {
     <table>
       <tbody>
         {filteredPersons().map(elem =>
-          <Person key={elem.name} name={elem.name} number={elem.number}/>)
+          <Person key={elem.name}
+                  name={elem.name}
+                  number={elem.number}
+                  removePerson={() => removePerson(elem.id)}/>)
         }
       </tbody>
     </table>
   )
 }
 
-const Person = ({name, number}) => {
+const Person = ({name, number, removePerson}) => {
   return (
     <tr>
-      <td>{name}</td><td>{number}</td>
+      <td>{name}</td><td>{number}<button onClick={removePerson}>delete</button></td>
     </tr>
   )
 }
