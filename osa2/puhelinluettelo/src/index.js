@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
-import axios from 'axios'
+import numberService from './services/numbers'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -14,13 +14,11 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
       return
     }
-
+    numberService
+      .create(newName, newNumber)
+      .then(response => setPersons(persons.concat(response.data)))
     setNewName("")
     setNewNumber("")
-
-    axios
-      .post("http://localhost:3001/persons", {name:newName, number:newNumber})
-      .then(response => setPersons(persons.concat(response.data)))
   }
 
   const handleNewNameChange = (event) => {
@@ -36,8 +34,8 @@ const App = () => {
   }
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
+    numberService
+      .getAll()
       .then(response => {
         setPersons(response.data)
       })
