@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import numberService from './services/numbers'
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
+  const [ notification, setNotification ] = useState({message:null, isError:false})
 
   const submitPressed = (event) => {
     event.preventDefault()
@@ -15,13 +17,30 @@ const App = () => {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with new one?`)) {
         numberService
           .update(existingPerson.id, {...existingPerson, number:newNumber})
-          .then(response =>
-            setPersons(persons.map(person => person.id === existingPerson.id ? response.data : person)))
+          .then(response => {
+            setPersons(persons.map(person => person.id === existingPerson.id ? response.data : person))
+            setNotification({message:`'${newName}'s number changed to '${newNumber}'`, isError:false})
+            setTimeout(() => {
+              setNotification({message:null, isError:false})
+            }, 5000)
+          })
+          .catch(error => {
+            setNotification({message:`'${newName}' was already removed from server`, isError:true})
+            setTimeout(() => {
+              setNotification({message:null, isError:false})
+            }, 5000)
+          })
       }
     } else {
       numberService
         .create(newName, newNumber)
-        .then(response => setPersons(persons.concat(response.data)))
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          setNotification({message:`Added '${response.data.name}'`, isError:false})
+          setTimeout(() => {
+            setNotification({message:null, isError:false})
+          }, 5000)
+      })
     }
     setNewName("")
     setNewNumber("")
@@ -40,10 +59,17 @@ const App = () => {
   }
 
   const removePerson = (id) => {
-    if (window.confirm(`Delete ${persons.filter(person => person.id === id)[0].name} ?`)) {
+    const personName = persons.find(person => person.id === id).name
+    if (window.confirm(`Delete ${personName} ?`)) {
       numberService
         .remove(id)
-        .then(setPersons(persons.filter(person => person.id !== id)))
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+          setNotification({message:`Deleted '${personName}'`, isError:false})
+          setTimeout(() => {
+            setNotification({message:null, isError:false})
+          }, 5000)
+        })
     }
   }
 
@@ -59,6 +85,8 @@ const App = () => {
     <div>
 
       <h2>Phonebook</h2>
+      <Notification message={notification.message} isError={notification.isError} />
+
       <Filter filter={filter} filterChangeHandler={handleFilterChange} />
 
       <h3>Add a new</h3>
@@ -119,6 +147,16 @@ const Person = ({name, number, removePerson}) => {
     <tr>
       <td>{name}</td><td>{number}<button onClick={removePerson}>delete</button></td>
     </tr>
+  )
+}
+
+const Notification = ({message, isError}) => {
+  if (message === null) return null
+
+  return (
+    <div className={isError ? "error" : "success"}>
+      {message} {isError}
+    </div>
   )
 }
 
