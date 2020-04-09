@@ -10,13 +10,19 @@ const App = () => {
 
   const submitPressed = (event) => {
     event.preventDefault()
-    if (persons.some((elem) => elem.name === newName)){
-      alert(`${newName} is already added to phonebook`)
-      return
+    const existingPerson = persons.find((elem) => elem.name === newName)
+    if (existingPerson){
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with new one?`)) {
+        numberService
+          .update(existingPerson.id, {...existingPerson, number:newNumber})
+          .then(response =>
+            setPersons(persons.map(person => person.id === existingPerson.id ? response.data : person)))
+      }
+    } else {
+      numberService
+        .create(newName, newNumber)
+        .then(response => setPersons(persons.concat(response.data)))
     }
-    numberService
-      .create(newName, newNumber)
-      .then(response => setPersons(persons.concat(response.data)))
     setNewName("")
     setNewNumber("")
   }
