@@ -19,16 +19,10 @@ const App = () => {
           .update(existingPerson.id, {...existingPerson, number:newNumber})
           .then(response => {
             setPersons(persons.map(person => person.id === existingPerson.id ? response.data : person))
-            setNotification({message:`${newName}'s number changed to ${newNumber}`, isError:false})
-            setTimeout(() => {
-              setNotification({message:null, isError:false})
-            }, 5000)
+            setTimedNotification(`${newName}'s number changed to ${newNumber}`, false)
           })
           .catch(error => {
-            setNotification({message:`${newName} was already removed from server`, isError:true})
-            setTimeout(() => {
-              setNotification({message:null, isError:false})
-            }, 5000)
+            setTimedNotification(`${newName} was already removed from server`, true)
           })
       }
     } else {
@@ -36,11 +30,8 @@ const App = () => {
         .create(newName, newNumber)
         .then(response => {
           setPersons(persons.concat(response.data))
-          setNotification({message:`Added ${response.data.name}`, isError:false})
-          setTimeout(() => {
-            setNotification({message:null, isError:false})
-          }, 5000)
-      })
+          setTimedNotification(`Added ${response.data.name}`, false) })
+        .catch(error => setTimedNotification(error.response.data.error, true))
     }
     setNewName("")
     setNewNumber("")
@@ -58,6 +49,13 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const setTimedNotification = (message, isError) => {
+    setNotification({message, isError})
+    setTimeout(() => {
+      setNotification({message:null, isError:false})
+    }, 5000) 
+  }
+
   const removePerson = (id) => {
     const personName = persons.find(person => person.id === id).name
     if (window.confirm(`Delete ${personName} ?`)) {
@@ -65,10 +63,7 @@ const App = () => {
         .remove(id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
-          setNotification({message:`Deleted ${personName}`, isError:false})
-          setTimeout(() => {
-            setNotification({message:null, isError:false})
-          }, 5000)
+          setTimedNotification(`Deleted ${personName}`, false)
         })
     }
   }
