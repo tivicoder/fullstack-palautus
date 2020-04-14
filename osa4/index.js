@@ -4,6 +4,7 @@ const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 const config = require('./utils/config')
+const log = require('./utils/logger')
 
 
 const blogSchema = mongoose.Schema({
@@ -15,7 +16,7 @@ const blogSchema = mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema)
 
-console.log('url: ', config.MONGODB_URI)
+log.info('url: ', config.MONGODB_URI)
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 app.use(cors())
@@ -32,15 +33,15 @@ app.get('/api/blogs', (request, response) => {
 app.post('/api/blogs', (request, response) => {
   const blog = new Blog(request.body)
 
-  console.log('posting blog ', request)
+  log.info('posting blog ', request)
   blog
     .save()
     .then(result => {
-      console.log('done')
+      log.info('done')
       response.status(201).json(result)
     })
 })
 
 app.listen(config.PORT, () => {
-  console.log(`Server running on port ${config.PORT}`)
+  log.info(`Server running on port ${config.PORT}`)
 })
