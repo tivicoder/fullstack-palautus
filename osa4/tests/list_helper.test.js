@@ -11,7 +11,7 @@ const listWithOneBlog = [
   }
 ]
 
-const listWithFiveBlogs = [
+const listWithManyBlogs = [
   { _id: '5a422a851b54a676234d17f7', title: 'React patterns', author: 'Michael Chan', url: 'https://reactpatterns.com/', likes: 7, __v: 0 },
   { _id: '5a422aa71b54a676234d17f8', title: 'Go To Statement Considered Harmful', author: 'Edsger W. Dijkstra', url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html', likes: 5, __v: 0 },
   { _id: '5a422b3a1b54a676234d17f9', title: 'Canonical string reduction', author: 'Edsger W. Dijkstra', url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html', likes: 12, __v: 0 },
@@ -39,7 +39,7 @@ describe('total likes', () => {
   })
 
   test('of a bigger list is calculated right', () => {
-    const result = listHelper.totalLikes(listWithFiveBlogs)
+    const result = listHelper.totalLikes(listWithManyBlogs)
     expect(result).toBe(36)
   })
 
@@ -60,12 +60,35 @@ describe('favorite blog', () => {
     })
   })
 
-  test('of a list with five blogs returns the correct blog title, author and likes', () => {
-    const result = listHelper.favoriteBlog(listWithFiveBlogs)
+  test('of a list with many blogs returns the correct blog title, author and likes', () => {
+    const result = listHelper.favoriteBlog(listWithManyBlogs)
     expect(result).toEqual({
-      title: listWithFiveBlogs[2].title,
-      author: listWithFiveBlogs[2].author,
-      likes: listWithFiveBlogs[2].likes
+      title: listWithManyBlogs[2].title,
+      author: listWithManyBlogs[2].author,
+      likes: listWithManyBlogs[2].likes
+    })
+  })
+} )
+
+describe('most blogs', () => {
+  test('of empty list is null', () => {
+    const result = listHelper.mostBlogs([])
+    expect(result).toBe(null)
+  })
+
+  test('of a list with one blog returns the blog author and count 1', () => {
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result).toEqual({
+      author: listWithOneBlog[0].author,
+      blogs: 1
+    })
+  })
+
+  test('of a list with many blogs returns the correct blog author and count', () => {
+    const result = listHelper.mostBlogs(listWithManyBlogs)
+    expect(result).toEqual({
+      author: 'Robert C. Martin',
+      blogs: 3
     })
   })
 } )
