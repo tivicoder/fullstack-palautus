@@ -1,21 +1,13 @@
 const blogsRouter = require('express').Router()
-//const Blog = require('../models/blog')
-const mongoose = require('mongoose')
+const Blog = require('../models/blog')
 const log = require('../utils/logger')
 
-const blogSchema = mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number
-})
-
-const Blog = mongoose.model('Blog', blogSchema)
-
 blogsRouter.get('/', (request, response) => {
+  log.info('getting all blogs: ')
   Blog
     .find({})
     .then(blogs => {
+      log.info('done')
       response.json(blogs)
     })
 })
