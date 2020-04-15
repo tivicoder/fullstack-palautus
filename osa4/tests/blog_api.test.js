@@ -88,6 +88,19 @@ describe('post', () => {
   })
 })
 
+describe('delete', () => {
+  test('delete returns success 204 and removes blog from database', async () => {
+    const blogsBefore = helper.listWithManyBlogs
+    const idToRemove = blogsBefore[1]._id
+    await api.delete(`/api/blogs/${idToRemove}`)
+      .expect(204)
+    const blogsAfter = await helper.blogsInDb()
+
+    expect(blogsAfter.length).toBe(blogsBefore.length - 1)
+    expect(blogsAfter.find(blog => blog.id === idToRemove)).toBeFalsy()
+  })
+})
+
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.listWithManyBlogs)
