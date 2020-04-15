@@ -70,6 +70,22 @@ describe('post', () => {
 
     expect(addedBlog.likes).toBe(0)
   })
+
+  test('require title', async () => {
+    const newBlogWithoutTitle = { ...newBlog }
+    delete newBlogWithoutTitle.title
+
+    await api.post('/api/blogs', newBlog).send(newBlogWithoutTitle)
+      .expect(400)
+  })
+
+  test('require url', async () => {
+    const newBlogWithoutUrl = { ...newBlog }
+    delete newBlogWithoutUrl.url
+
+    await api.post('/api/blogs', newBlog).send(newBlogWithoutUrl)
+      .expect(400)
+  })
 })
 
 beforeEach(async () => {
