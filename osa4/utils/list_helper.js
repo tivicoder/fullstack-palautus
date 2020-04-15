@@ -1,4 +1,5 @@
-const dummy = (dummy) => {
+const dummy = (blogs) => {
+  blogs // to get rid of eslint warning
   return 1
 }
 
