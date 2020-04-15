@@ -101,6 +101,32 @@ describe('delete', () => {
   })
 })
 
+describe('update', () => {
+  const newBlog = {
+    'title': 'updated title',
+    'author': 'updated author',
+    'url': 'updated url',
+    'likes': 532
+  }
+
+  test('update returns success 200 and updates properties', async () => {
+    const blogsBefore = helper.listWithManyBlogs
+    const idToUpdate = blogsBefore[3]._id
+    await api.put(`/api/blogs/${idToUpdate}`)
+      .send(newBlog)
+      .expect(200)
+
+    const blogsAfter = await helper.blogsInDb()
+    const updatedBlog = blogsAfter.find(blog => blog.id === idToUpdate)
+
+    expect(updatedBlog).toBeDefined()
+    expect(updatedBlog.author).toBe(newBlog.author)
+    expect(updatedBlog.url).toBe(newBlog.url)
+    expect(updatedBlog.likes).toBe(newBlog.likes)
+    expect(blogsAfter.length).toBe(blogsBefore.length)
+  })
+})
+
 beforeEach(async () => {
   await Blog.deleteMany({})
   await Blog.insertMany(helper.listWithManyBlogs)
