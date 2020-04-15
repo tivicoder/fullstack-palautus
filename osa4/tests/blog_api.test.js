@@ -24,6 +24,12 @@ describe('api get', () => {
     const titles = response.body.map(r => r.title)
     expect(titles).toContain('TDD harms architecture')
   })
+
+  test('expect response to have ID property', async () => {
+    const response =  await api.get('/api/blogs')
+    const blog = response.body[0]
+    expect(blog.id).toBeDefined()
+  })
 })
 
 beforeEach(async () => {
