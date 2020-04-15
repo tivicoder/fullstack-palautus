@@ -59,6 +59,17 @@ describe('post', () => {
     expect(addedBlog.likes).toBe(newBlog.likes)
     expect(Object.keys(addedBlog).length).toBe(Object.keys(newBlog).length + 1) // including 'id'
   })
+
+  test('if likes is not provided it is set to 0', async () => {
+    const newBlogWithoutLikes = { ...newBlog }
+    delete newBlogWithoutLikes.likes
+
+    await api.post('/api/blogs', newBlog).send(newBlogWithoutLikes)
+    const blogsAfter = await helper.blogsInDb()
+    const addedBlog = blogsAfter.find(blog => blog.title === newBlogWithoutLikes.title)
+
+    expect(addedBlog.likes).toBe(0)
+  })
 })
 
 beforeEach(async () => {
