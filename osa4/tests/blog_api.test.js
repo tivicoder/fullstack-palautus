@@ -6,7 +6,7 @@ const helper = require('./test_helper')
 
 const api = supertest(app)
 
-describe('api get', () => {
+describe('get', () => {
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -29,6 +29,35 @@ describe('api get', () => {
     const response =  await api.get('/api/blogs')
     const blog = response.body[0]
     expect(blog.id).toBeDefined()
+  })
+})
+
+describe('post', () => {
+  const newBlog = {
+    'title': 'unittest title 6489',
+    'author': 'unittest author 6489',
+    'url': 'unittest url 6489',
+    'likes': 32
+  }
+
+  test('adding one blog is successful', async () => {
+    const blogsBefore = helper.listWithManyBlogs
+    await api.post('/api/blogs', newBlog).send(newBlog)
+      .expect(201)
+    const blogsAfter = await helper.blogsInDb()
+    expect(blogsAfter.length).toBe(blogsBefore.length + 1)
+  })
+
+  test('added blog has correct content', async () => {
+    await api.post('/api/blogs', newBlog).send(newBlog)
+    const blogsAfter = await helper.blogsInDb()
+    const addedBlog = blogsAfter.find(blog => blog.title === newBlog.title)
+
+    expect(addedBlog).toBeDefined()
+    expect(addedBlog.author).toBe(newBlog.author)
+    expect(addedBlog.url).toBe(newBlog.url)
+    expect(addedBlog.likes).toBe(newBlog.likes)
+    expect(Object.keys(addedBlog).length).toBe(Object.keys(newBlog).length + 1) // including 'id'
   })
 })
 
