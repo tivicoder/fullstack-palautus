@@ -42,14 +42,14 @@ describe('post', () => {
 
   test('adding one blog is successful', async () => {
     const blogsBefore = helper.listWithManyBlogs
-    await api.post('/api/blogs', newBlog).send(newBlog)
+    await api.post('/api/blogs').send(newBlog)
       .expect(201)
     const blogsAfter = await helper.blogsInDb()
     expect(blogsAfter.length).toBe(blogsBefore.length + 1)
   })
 
   test('added blog has correct content', async () => {
-    await api.post('/api/blogs', newBlog).send(newBlog)
+    await api.post('/api/blogs').send(newBlog)
     const blogsAfter = await helper.blogsInDb()
     const addedBlog = blogsAfter.find(blog => blog.title === newBlog.title)
 
@@ -64,7 +64,7 @@ describe('post', () => {
     const newBlogWithoutLikes = { ...newBlog }
     delete newBlogWithoutLikes.likes
 
-    await api.post('/api/blogs', newBlog).send(newBlogWithoutLikes)
+    await api.post('/api/blogs').send(newBlogWithoutLikes)
     const blogsAfter = await helper.blogsInDb()
     const addedBlog = blogsAfter.find(blog => blog.title === newBlogWithoutLikes.title)
 
@@ -75,7 +75,7 @@ describe('post', () => {
     const newBlogWithoutTitle = { ...newBlog }
     delete newBlogWithoutTitle.title
 
-    await api.post('/api/blogs', newBlog).send(newBlogWithoutTitle)
+    await api.post('/api/blogs').send(newBlogWithoutTitle)
       .expect(400)
   })
 
@@ -83,7 +83,7 @@ describe('post', () => {
     const newBlogWithoutUrl = { ...newBlog }
     delete newBlogWithoutUrl.url
 
-    await api.post('/api/blogs', newBlog).send(newBlogWithoutUrl)
+    await api.post('/api/blogs').send(newBlogWithoutUrl)
       .expect(400)
   })
 })
