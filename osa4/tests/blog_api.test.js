@@ -6,7 +6,7 @@ const helper = require('./test_helper')
 
 const api = supertest(app)
 
-describe('get', () => {
+describe('get blogs', () => {
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -32,7 +32,7 @@ describe('get', () => {
   })
 })
 
-describe('post', () => {
+describe('post blogs', () => {
   const newBlog = {
     'title': 'unittest title 6489',
     'author': 'unittest author 6489',
@@ -88,7 +88,7 @@ describe('post', () => {
   })
 })
 
-describe('delete', () => {
+describe('delete blogs', () => {
   test('delete returns success 204 and removes blog from database', async () => {
     const blogsBefore = helper.listWithManyBlogs
     const idToRemove = blogsBefore[1]._id
@@ -101,7 +101,7 @@ describe('delete', () => {
   })
 })
 
-describe('update', () => {
+describe('update blogs', () => {
   const newBlog = {
     'title': 'updated title',
     'author': 'updated author',
