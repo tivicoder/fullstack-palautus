@@ -13,7 +13,7 @@ describe('get users', () => {
       .expect('Content-Type', /application\/json/)
     const users = response.body
 
-    expect(users.length).toBe(listWithManyUsers.length)
+    expect(users.length).toBe(initialUsers.length)
   })
 
   test('retrieved user contains correct properties and values', async () => {
@@ -22,8 +22,8 @@ describe('get users', () => {
     const user1 = response.body[1]
 
     // expect object type: { username, name, id }
-    expect(user1.username).toBe(listWithManyUsers[1].username)
-    expect(user1.name).toBe(listWithManyUsers[1].name)
+    expect(user1.username).toBe(initialUsers[1].username)
+    expect(user1.name).toBe(initialUsers[1].name)
     expect(user1.id).toBeDefined()
     expect(Object.keys(user1).length).toBe(3) // only above properties
   })
@@ -34,9 +34,7 @@ describe('post users', () => {
     const usersBefore = await helper.usersInDb()
 
     const newUser = {
-      username: 'new username 1',
-      name: 'new user 1',
-      password: 'new password 1',
+      username: 'new username 1', name: 'new user 1', password: 'new password 1'
     }
 
     await api
@@ -54,17 +52,62 @@ describe('post users', () => {
     expect(addedUser.id).toBeDefined()
     expect(Object.keys(addedUser).length).toBe(3) // only above properties
   })
+
+  test('too short username is rejected', async () => {
+    const newUser = {
+      username: 'ne',
+      name: 'new user 1',
+      password: 'new password 1'
+    }
+
+    const response = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+    expect(response.body.error)
+      .toMatch(/User validation failed: username.*is shorter than the minimum/)
+  })
+
+  test('too short password is rejected', async () => {
+    const newUser = {
+      username: 'new username 1',
+      name: 'new user 1',
+      password: 'ne'
+    }
+
+    const response = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+    expect(response.body.error)
+      .toMatch(/No password or too short password given/)
+  })
+
+  test('duplicate username is rejected', async () => {
+    const newUser = {
+      username: initialUsers[1].username,
+      name: 'new user 1',
+      password: 'new password 1'
+    }
+
+    const response = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+    expect(response.body.error)
+      .toMatch(/User validation failed.*expected.*username.*to be unique/)
+  })
 })
 
-const listWithManyUsers = [
-  { username: 'test username1', name: 'test user1', passwordHash: 'test passwordhash1' },
-  { username: 'test username2', name: 'test user2', passwordHash: 'test passwordhash2' },
-  { username: 'test username3', name: 'test user3', passwordHash: 'test passwordhash3' }
+const initialUsers = [
+  { username: 'init username1', name: 'init user1', passwordHash: 'init passwordhash1' },
+  { username: 'init username2', name: 'init user2', passwordHash: 'init passwordhash2' },
+  { username: 'init username3', name: 'init user3', passwordHash: 'init passwordhash3' }
 ]
 
 beforeEach(async () => {
   await User.deleteMany({})
-  await User.insertMany(listWithManyUsers)
+  await User.insertMany(initialUsers)
 })
 
 afterAll(() => {

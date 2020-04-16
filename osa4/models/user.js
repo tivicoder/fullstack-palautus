@@ -6,7 +6,9 @@ mongoose.set('useCreateIndex', true)
 const userSchema = mongoose.Schema({
   username:  {
     type: String,
-    unique: true
+    unique: true,
+    minlength: 3,
+    required: true
   },
   name: String,
   passwordHash: String,
