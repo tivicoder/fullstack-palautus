@@ -5,5 +5,5 @@ Content-Type: application/json
   "title": "test blog 2",
   "author": "test author 2",
   "url": "test url 2",
-  "likes": 7
+  "likes": 2
 }

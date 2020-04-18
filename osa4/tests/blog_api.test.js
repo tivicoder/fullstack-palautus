@@ -57,6 +57,8 @@ describe('post blogs', () => {
     expect(addedBlog.author).toBe(newBlog.author)
     expect(addedBlog.url).toBe(newBlog.url)
     expect(addedBlog.likes).toBe(newBlog.likes)
+    // TODO: check that user reference is added when blog creator exists
+    //expect(addedBlog.user).toBeDefined()
     expect(Object.keys(addedBlog).length).toBe(Object.keys(newBlog).length + 1) // including 'id'
   })
 
@@ -132,6 +134,7 @@ beforeEach(async () => {
   await Blog.insertMany(helper.listWithManyBlogs)
 })
 
-afterAll(() => {
+afterAll(async () => {
+  await Blog.deleteMany({})
   mongoose.connection.close()
 })

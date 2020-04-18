@@ -25,7 +25,8 @@ describe('get users', () => {
     expect(user1.username).toBe(initialUsers[1].username)
     expect(user1.name).toBe(initialUsers[1].name)
     expect(user1.id).toBeDefined()
-    expect(Object.keys(user1).length).toBe(3) // only above properties
+    expect(user1.blogs).toBeDefined()
+    expect(Object.keys(user1).length).toBe(4) // only above properties
   })
 })
 
@@ -50,7 +51,8 @@ describe('post users', () => {
     expect(addedUser).toBeDefined
     expect(addedUser.name).toBe(newUser.name)
     expect(addedUser.id).toBeDefined()
-    expect(Object.keys(addedUser).length).toBe(3) // only above properties
+    expect(addedUser.blogs).toEqual([])
+    expect(Object.keys(addedUser).length).toBe(4) // only above properties
   })
 
   test('too short username is rejected', async () => {
@@ -110,6 +112,7 @@ beforeEach(async () => {
   await User.insertMany(initialUsers)
 })
 
-afterAll(() => {
+afterAll(async () => {
+  await User.deleteMany({})
   mongoose.connection.close()
 })
