@@ -32,9 +32,8 @@ const getTokenUserIdFrom = request => {
     return process.env.TEST_USER_ID // set in test code
   }
 
-  const authorization = request.authorization
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    const decodedToken = jwt.verify(authorization.substring(7), process.env.SECRET)
+  if (request.token) {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
     return decodedToken.id
   }
   return null
