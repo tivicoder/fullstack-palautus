@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
 const api = supertest(app)
@@ -40,6 +41,22 @@ describe('post blogs', () => {
     'likes': 32
   }
 
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(helper.listWithManyBlogs)
+
+    await User.deleteMany({})
+    const dummyUserForAuthentication = {
+      username: 'dummy username'
+    }
+    const user = await User.create(dummyUserForAuthentication)
+    process.env.TEST_USER_ID = user._id // to be read in blogs.js
+  })
+
+  afterAll(async () => {
+    await User.deleteMany({})
+  })
+
   test('adding one blog is successful', async () => {
     const blogsBefore = helper.listWithManyBlogs
     await api.post('/api/blogs').send(newBlog)
@@ -57,9 +74,9 @@ describe('post blogs', () => {
     expect(addedBlog.author).toBe(newBlog.author)
     expect(addedBlog.url).toBe(newBlog.url)
     expect(addedBlog.likes).toBe(newBlog.likes)
-    // TODO: check that user reference is added when blog creator exists
-    //expect(addedBlog.user).toBeDefined()
-    expect(Object.keys(addedBlog).length).toBe(Object.keys(newBlog).length + 1) // including 'id'
+    expect(String(addedBlog.user)).toBe(process.env.TEST_USER_ID)
+    expect(Object.keys(addedBlog).length)
+      .toBe(Object.keys(newBlog).length + 2) // including 'id' and 'user'
   })
 
   test('if likes is not provided it is set to 0', async () => {

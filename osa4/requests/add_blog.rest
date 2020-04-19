@@ -2,9 +2,9 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "test blog 1",
-  "author": "test author 1",
-  "url": "test url 1",
-  "likes": 1,
-  "authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QgdXNlcm5hbWUgMSIsImlkIjoiNWU5YWQyZWMzYThhMGU0OWIwOGVhZTRkIiwiaWF0IjoxNTg3Mjc5NTIxfQ.IjPFIrcw74TNM-LVacSwzAXiOe-g_4mIASttN8dpwfA"
+  "title": "test blog 2",
+  "author": "test author 2",
+  "url": "test url 2",
+  "likes": 2,
+  "authorization": "bearer TOKEN_HERE"
 }
