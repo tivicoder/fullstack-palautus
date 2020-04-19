@@ -40,8 +40,18 @@ const getTokenUserIdFrom = request => {
 }
 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
-  response.status(204).end()
+  const userId = getTokenUserIdFrom(request.body)
+  if (!userId) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+
+  const blog = await Blog.findById(request.params.id)
+  if (blog.user.toString() === userId.toString()) {
+    await blog.remove()
+    response.status(204).end()
+  } else {
+    return response.status(403).json({ error: 'not allowed to remove blog' })
+  }
 })
 
 blogsRouter.put('/:id', async (request, response) => {
