@@ -9,6 +9,7 @@ const api = supertest(app)
 
 describe('get blogs', () => {
   test('blogs are returned as json', async () => {
+    await Blog.insertMany(helper.listWithManyBlogs)
     await api
       .get('/api/blogs')
       .expect(200)
@@ -16,17 +17,20 @@ describe('get blogs', () => {
   })
 
   test('correct amount of blogs is returned', async () => {
-    const response =  await api.get('/api/blogs')
+    await Blog.insertMany(helper.listWithManyBlogs)
+    const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(helper.listWithManyBlogs.length)
   })
 
   test('a specific blog is among the returned blogs', async () => {
+    await Blog.insertMany(helper.listWithManyBlogs)
     const response =  await api.get('/api/blogs')
     const titles = response.body.map(r => r.title)
     expect(titles).toContain('TDD harms architecture')
   })
 
   test('expect response to have ID property', async () => {
+    await Blog.insertMany(helper.listWithManyBlogs)
     const response =  await api.get('/api/blogs')
     const blog = response.body[0]
     expect(blog.id).toBeDefined()
@@ -44,13 +48,6 @@ describe('post blogs', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.listWithManyBlogs)
-
-    await User.deleteMany({})
-    const dummyUserForAuthentication = {
-      username: 'dummy username'
-    }
-    const user = await User.create(dummyUserForAuthentication)
-    process.env.TEST_USER_ID = user._id // to be read in blogs.js
   })
 
   afterAll(async () => {
@@ -74,7 +71,7 @@ describe('post blogs', () => {
     expect(addedBlog.author).toBe(newBlog.author)
     expect(addedBlog.url).toBe(newBlog.url)
     expect(addedBlog.likes).toBe(newBlog.likes)
-    expect(String(addedBlog.user)).toBe(process.env.TEST_USER_ID)
+    expect(String(addedBlog.user)).toBe(allowedUserId)
     expect(Object.keys(addedBlog).length)
       .toBe(Object.keys(newBlog).length + 2) // including 'id' and 'user'
   })
@@ -109,14 +106,34 @@ describe('post blogs', () => {
 
 describe('delete blogs', () => {
   test('delete returns success 204 and removes blog from database', async () => {
-    const blogsBefore = helper.listWithManyBlogs
-    const idToRemove = blogsBefore[1]._id
-    await api.delete(`/api/blogs/${idToRemove}`)
+    const blogsBefore =
+      helper.listWithManyBlogs.map(blog => ({ ...blog, user: allowedUserId }))
+    await Blog.insertMany(blogsBefore)
+
+    const blogToRemove = blogsBefore[1]
+    await api.delete(`/api/blogs/${blogToRemove._id}`)
       .expect(204)
     const blogsAfter = await helper.blogsInDb()
 
     expect(blogsAfter.length).toBe(blogsBefore.length - 1)
-    expect(blogsAfter.find(blog => blog.id === idToRemove)).toBeFalsy()
+    expect(blogsAfter.find(blog => blog.id === blogToRemove._id)).toBeFalsy()
+  })
+
+  test('delete fails with error 403: not allowed', async () => {
+    const blogsBefore =
+      helper.listWithManyBlogs.map(blog => ({ ...blog, user: disallowedUserId }))
+    await Blog.insertMany(blogsBefore)
+
+    const blogToRemove = blogsBefore[1]
+    const response = await api.delete(`/api/blogs/${blogToRemove._id}`)
+      .expect(403)
+    expect(response.body.error)
+      .toMatch(/not allowed to remove blog/)
+
+    // check that blog is still there
+    const blogsAfter = await helper.blogsInDb()
+    expect(blogsAfter.length).toBe(blogsBefore.length)
+    expect(blogsAfter.find(blog => blog.id === blogToRemove._id)).toBeDefined()
   })
 })
 
@@ -130,6 +147,8 @@ describe('update blogs', () => {
 
   test('update returns success 200 and updates properties', async () => {
     const blogsBefore = helper.listWithManyBlogs
+    await Blog.insertMany(blogsBefore)
+
     const idToUpdate = blogsBefore[3]._id
     await api.put(`/api/blogs/${idToUpdate}`)
       .send(newBlog)
@@ -146,12 +165,27 @@ describe('update blogs', () => {
   })
 })
 
+let allowedUserId
+let disallowedUserId
+
+beforeAll(async () => {
+  await User.deleteMany({})
+
+  // create 2 users for testing authentication
+  allowedUserId = String((await User.create({ username: 'dummy allowed username' }))._id)
+  disallowedUserId = String((await User.create({ username: 'dummy disallowed username' }))._id)
+
+  // GLOBAL VARIABLE is read in blogs.js for successful authentication
+  process.env.TEST_USER_ID = allowedUserId
+})
+
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.listWithManyBlogs)
 })
 
 afterAll(async () => {
   await Blog.deleteMany({})
+  await User.deleteMany({})
+  delete process.env.TEST_USER_ID
   mongoose.connection.close()
 })
