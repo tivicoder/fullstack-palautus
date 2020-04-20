@@ -15,7 +15,7 @@ SECRET = SomeSecretPhraseHere
 
 ## Run server
 
-`npm run dev`
+`npm start`
 
 You can then run rest queries in `./requests/.rest` with [Postman](https://www.getpostman.com/) or [VS Code Rest Plugin](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) to test your server.
 
