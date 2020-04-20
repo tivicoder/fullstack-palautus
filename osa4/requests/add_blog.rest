@@ -1,10 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer TOKEN_HERE
 
 {
   "title": "test blog 2",
   "author": "test author 2",
   "url": "test url 2",
-  "likes": 2,
-  "authorization": "bearer TOKEN_HERE"
+  "likes": 2
 }

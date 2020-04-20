@@ -10,7 +10,7 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const userId = getTokenUserIdFrom(request.body)
+  const userId = getUserIdInTokenFrom(request.body)
   if (!userId) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
@@ -26,27 +26,27 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-const getTokenUserIdFrom = request => {
-  // TODO: get rid of this test code
-  if (process.env.NODE_ENV === 'test') {
-    return process.env.TEST_USER_ID // set in test code
+const getUserIdInTokenFrom = request => {
+  const token = request.token
+  if (!token) {
+    return null
   }
 
-  if (request.token) {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    return decodedToken.id
+  if (process.env.NODE_ENV === 'test') {
+    return token
+  } else {
+    return jwt.verify(token, process.env.SECRET).id
   }
-  return null
 }
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const userId = getTokenUserIdFrom(request.body)
+  const userId = getUserIdInTokenFrom(request.body)
   if (!userId) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
 
   const blog = await Blog.findById(request.params.id)
-  if (blog.user.toString() === userId.toString()) {
+  if (blog && blog.user.toString() === userId.toString()) {
     await blog.remove()
     response.status(204).end()
   } else {

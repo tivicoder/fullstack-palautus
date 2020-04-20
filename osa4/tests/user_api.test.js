@@ -6,6 +6,8 @@ const helper = require('./test_helper')
 
 const api = supertest(app)
 
+const initialUsers = helper.listWithManyUsers
+
 describe('get users', () => {
   test('get all users succeeds and returns correct amount of users', async () => {
     const response = await api.get('/api/users')
@@ -100,12 +102,6 @@ describe('post users', () => {
       .toMatch(/User validation failed.*expected.*username.*to be unique/)
   })
 })
-
-const initialUsers = [
-  { username: 'init username1', name: 'init user1', passwordHash: 'init passwordhash1' },
-  { username: 'init username2', name: 'init user2', passwordHash: 'init passwordhash2' },
-  { username: 'init username3', name: 'init user3', passwordHash: 'init passwordhash3' }
-]
 
 beforeEach(async () => {
   await User.deleteMany({})

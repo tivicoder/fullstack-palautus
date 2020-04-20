@@ -1,6 +1,3 @@
 DELETE http://localhost:3003/api/blogs/5e9c65fc22d6f24bc588fe29
 Content-Type: application/json
-
-{
-  "authorization": "bearer TOKEN_HERE"
-}
+Authorization: bearer TOKEN_HERE

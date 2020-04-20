@@ -21,6 +21,12 @@ const listWithManyBlogs = [
   { _id: '5a422bc61b54a676234d17fc', title: 'Type wars', author: 'Robert C. Martin', url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html', likes: 2, __v: 0 }
 ]
 
+const listWithManyUsers = [
+  { username: 'init username1', name: 'init user1', passwordHash: 'init passwordhash1' },
+  { username: 'init username2', name: 'init user2', passwordHash: 'init passwordhash2' },
+  { username: 'init username3', name: 'init user3', passwordHash: 'init passwordhash3' }
+]
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
@@ -34,6 +40,7 @@ const usersInDb = async () => {
 module.exports = {
   listWithOneBlog,
   listWithManyBlogs,
+  listWithManyUsers,
   blogsInDb,
   usersInDb
 }
