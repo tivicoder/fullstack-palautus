@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import FormInput from './components/FormInput'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import './App.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,6 +14,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [notification, setNotification] = useState({ message:null, isError:false })
 
 
   useEffect(() => {
@@ -26,6 +29,13 @@ const App = () => {
     }
   }, [])
 
+  const setTimedNotification = (message, isError) => {
+    setNotification({message, isError})
+    setTimeout(() => {
+      setNotification({message:null, isError:false})
+    }, 5000) 
+  }
+
   if (user === null) {
     const handleLogin = async (event) => {
       event.preventDefault()
@@ -39,11 +49,14 @@ const App = () => {
         window.localStorage.setItem('loggedBlogappUser', JSON.stringify(loginUser))
         setUsername('')
         setPassword('')
+      } else {
+        setTimedNotification('wrong username or password', true)
       }
     }
     return (
       <div>
         <h2>Log in to application</h2>
+        <Notification message={notification.message} isError={notification.isError} />
         <form onSubmit={handleLogin}>
         <FormInput name="username" value={username} valueChanged={setUsername} />
         <FormInput name="password" value={password} valueChanged={setPassword} type="password" />
@@ -63,7 +76,10 @@ const App = () => {
     event.preventDefault()
     console.log(`createClicked: title:${title} author:${author} url:${url}`)
     blogService.create(title, author, url, user.data.token)
-      .then(blog => setBlogs(blogs.concat(blog)))
+      .then(blog => {
+        setBlogs(blogs.concat(blog))
+        setTimedNotification(`a new blog ${title} by ${author} added`)
+      })
     setTitle('')
     setAuthor('')
     setUrl('')
@@ -72,6 +88,7 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
+      <Notification message={notification.message} isError={notification.isError} />
       {user.data.name} logged in <button type="button" onClick={logoutClicked}>logout</button>
       <h3>Create new</h3>
       <form onSubmit={createClicked}>
