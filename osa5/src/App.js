@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import FormInput from './components/FormInput'
 import Notification from './components/Notification'
+import NewBlogForm from './components/NewBlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './App.css'
@@ -11,9 +12,6 @@ const App = () => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [notification, setNotification] = useState({ message:null, isError:false })
 
 
@@ -72,17 +70,8 @@ const App = () => {
     setUser(null)
   }
 
-  const createClicked = (event) => {
-    event.preventDefault()
-    console.log(`createClicked: title:${title} author:${author} url:${url}`)
-    blogService.create(title, author, url, user.data.token)
-      .then(blog => {
-        setBlogs(blogs.concat(blog))
-        setTimedNotification(`a new blog ${title} by ${author} added`)
-      })
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+  const addToBlogs = (blog) => {
+    setBlogs(blogs.concat(blog))
   }
 
   return (
@@ -90,15 +79,9 @@ const App = () => {
       <h2>Blogs</h2>
       <Notification message={notification.message} isError={notification.isError} />
       {user.data.name} logged in <button type="button" onClick={logoutClicked}>logout</button>
-      <h3>Create new</h3>
-      <form onSubmit={createClicked}>
-        <FormInput name="title" value={title} valueChanged={setTitle} />
-        <FormInput name="author" value={author} valueChanged={setAuthor} />
-        <FormInput name="url" value={url} valueChanged={setUrl} />
-        <div>
-          <button type="submit">create</button>
-        </div>
-      </form>
+      <NewBlogForm token={user.data.token}
+                   addToBlogs={addToBlogs}
+                   setTimedNotification={setTimedNotification} />
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
