@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import FormInput from './components/FormInput'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './App.css'
@@ -70,8 +71,15 @@ const App = () => {
     setUser(null)
   }
 
-  const addToBlogs = (blog) => {
-    setBlogs(blogs.concat(blog))
+  const blogFormRef = React.createRef()
+
+  const addBlog = ({title, author, url }) => {
+    blogService.create(title, author, url, user.data.token)
+    .then(blog => {
+      setBlogs(blogs.concat(blog))
+      setTimedNotification(`a new blog ${title} by ${author} added`)
+    })
+    blogFormRef.current.toggleVisibility()
   }
 
   return (
@@ -79,9 +87,9 @@ const App = () => {
       <h2>Blogs</h2>
       <Notification message={notification.message} isError={notification.isError} />
       {user.data.name} logged in <button type="button" onClick={logoutClicked}>logout</button>
-      <NewBlogForm token={user.data.token}
-                   addToBlogs={addToBlogs}
-                   setTimedNotification={setTimedNotification} />
+      <Togglable buttonLabel='new blog' ref={blogFormRef} >
+        <NewBlogForm addBlog={addBlog} />
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
