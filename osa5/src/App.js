@@ -10,8 +10,8 @@ import './App.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState({ message:null, isError:false })
 
@@ -30,10 +30,10 @@ const App = () => {
   }, [])
 
   const setTimedNotification = (message, isError) => {
-    setNotification({message, isError})
+    setNotification({ message, isError })
     setTimeout(() => {
-      setNotification({message:null, isError:false})
-    }, 5000) 
+      setNotification({ message:null, isError:false })
+    }, 5000)
   }
 
   if (user === null) {
@@ -58,10 +58,10 @@ const App = () => {
         <h2>Log in to application</h2>
         <Notification message={notification.message} isError={notification.isError} />
         <form onSubmit={handleLogin}>
-        <FormInput name="username" value={username} valueChanged={setUsername} />
-        <FormInput name="password" value={password} valueChanged={setPassword} type="password" />
-        <button type="submit">login</button>
-      </form>
+          <FormInput name="username" value={username} valueChanged={setUsername} />
+          <FormInput name="password" value={password} valueChanged={setPassword} type="password" />
+          <button type="submit">login</button>
+        </form>
       </div>
     )
   }
@@ -74,13 +74,13 @@ const App = () => {
 
   const blogFormRef = React.createRef()
 
-  const addBlog = ({title, author, url }) => {
+  const addBlog = ({ title, author, url }) => {
     blogService.create(title, author, url, user.token)
-    .then(blog => {
-      setBlogs(blogs.concat(blog))
-      console.log('Added blog: ', blog)
-      setTimedNotification(`a new blog ${title} by ${author} added`)
-    })
+      .then(blog => {
+        setBlogs(blogs.concat(blog))
+        console.log('Added blog: ', blog)
+        setTimedNotification(`a new blog ${title} by ${author} added`)
+      })
     blogFormRef.current.toggleVisibility()
   }
 
@@ -133,8 +133,8 @@ const App = () => {
           <Blog key={blog.id} blog={blog}
             likeBlog={() => likeBlog(blog.id)}
             removeBlog={() => removeBlog(blog.id)}
-            allowRemove={() => allowBlogRemove(blog.id)} />
-      ) }
+            allowRemove={() => allowBlogRemove(blog.id)} />)
+      }
     </div>
   )
 }
