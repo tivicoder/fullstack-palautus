@@ -82,16 +82,32 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
   }
 
+  const likeBlog = (id) => {
+    console.log('Blog liked, id: ', id)
+    const blog = blogs.find(blog => blog.id === id)
+    blogService
+      .update(id, {
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes + 1,
+        user: blog.user.id })
+      .then(updatedBlog => {
+        console.log('updated likes: ', updatedBlog)
+        setBlogs(blogs.map(blog => blog.id === id ? updatedBlog : blog))
+      })
+  }
+
   return (
     <div>
       <h2>Blogs</h2>
       <Notification message={notification.message} isError={notification.isError} />
       {user.data.name} logged in <button type="button" onClick={logoutClicked}>logout</button>
       <Togglable buttonLabel='new blog' ref={blogFormRef} >
-        <NewBlogForm addBlog={addBlog} />
+        <NewBlogForm addBlog={addBlog} likeBlog={likeBlog} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} likeBlog={id => likeBlog(blog.id)} />
       )}
     </div>
   )

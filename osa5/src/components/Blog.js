@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likeBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -24,7 +24,7 @@ const Blog = ({ blog }) => {
       <button type='button' onClick={viewClicked}>{ expanded ? 'hide' : 'view' }</button>
       <div style={showWhenExpanded}>
         <div>{blog.url}</div>
-        <div>likes {blog.likes} <button type='button'>like</button> </div>
+        <div>likes {blog.likes} <button type='button' onClick={likeBlog}>like</button> </div>
         <div>{blog.user.name}</div>
       </div>
     </div>

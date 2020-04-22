@@ -13,4 +13,10 @@ const create = (title, author, url, token) => {
   return request.then(response => response.data)
 }
 
-export default { getAll, create }
+const update = (id, blog) => {
+  return axios
+    .put(`${baseUrl}/${id}`, blog)
+    .then(response => response.data)
+}
+
+export default { getAll, create, update }
