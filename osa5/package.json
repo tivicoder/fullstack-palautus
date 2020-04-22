@@ -35,6 +35,8 @@
   },
   "proxy": "http://localhost:3001",
   "devDependencies": {
-    "eslint-plugin-jest": "^23.8.2"
+    "eslint-plugin-flowtype": "^3.13.0",
+    "eslint-plugin-jest": "^23.8.2",
+    "typescript": "^3.8.3"
   }
 }
