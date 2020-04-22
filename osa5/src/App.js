@@ -25,6 +25,7 @@ const App = () => {
     if (loggedUserJSON) {
       const loggedUser = JSON.parse(loggedUserJSON)
       setUser(loggedUser)
+      console.log('user: ', loggedUser)
     }
   }, [])
 
@@ -74,16 +75,17 @@ const App = () => {
   const blogFormRef = React.createRef()
 
   const addBlog = ({title, author, url }) => {
-    blogService.create(title, author, url, user.data.token)
+    blogService.create(title, author, url, user.token)
     .then(blog => {
       setBlogs(blogs.concat(blog))
+      console.log('Added blog: ', blog)
       setTimedNotification(`a new blog ${title} by ${author} added`)
     })
     blogFormRef.current.toggleVisibility()
   }
 
   const likeBlog = (id) => {
-    console.log('Blog liked, id: ', id)
+    console.log('Like blog clicked, id: ', id)
     const blog = blogs.find(blog => blog.id === id)
     blogService
       .update(id, {
@@ -98,18 +100,40 @@ const App = () => {
       })
   }
 
+  const removeBlog = (id) => {
+    console.log('Remove blog clicked, id: ', id)
+    const blog = blogs.find(blog => blog.id === id)
+    console.log('blog creator: ', blog.user.name)
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      blogService
+        .remove(id, user.token)
+        .then(() => {
+          console.log('removed')
+          setBlogs(blogs.filter(blog => blog.id !== id))
+        })
+    }
+  }
+
+  const allowBlogRemove = (id) => {
+    const blog = blogs.find(blog => blog.id === id)
+    return blog.user.name === user.name
+  }
+
   return (
     <div>
       <h2>Blogs</h2>
       <Notification message={notification.message} isError={notification.isError} />
-      {user.data.name} logged in <button type="button" onClick={logoutClicked}>logout</button>
+      {user.name} logged in <button type="button" onClick={logoutClicked}>logout</button>
       <Togglable buttonLabel='new blog' ref={blogFormRef} >
         <NewBlogForm addBlog={addBlog} likeBlog={likeBlog} />
       </Togglable>
       {[...blogs]
         .sort((a,b) => b.likes - a.likes)
         .map(blog =>
-          <Blog key={blog.id} blog={blog} likeBlog={id => likeBlog(blog.id)} />
+          <Blog key={blog.id} blog={blog}
+            likeBlog={() => likeBlog(blog.id)}
+            removeBlog={() => removeBlog(blog.id)}
+            allowRemove={() => allowBlogRemove(blog.id)} />
       ) }
     </div>
   )

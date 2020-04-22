@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog, likeBlog }) => {
+const Blog = ({ blog, likeBlog, removeBlog, allowRemove }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
+  }
+  const removeBlogButtonStyle = {
+    backgroundColor: 'dodgerblue',
+    display: allowRemove() ? '' : 'none'
   }
 
   const [expanded, setExpanded] = useState(false)
@@ -26,6 +30,7 @@ const Blog = ({ blog, likeBlog }) => {
         <div>{blog.url}</div>
         <div>likes {blog.likes} <button type='button' onClick={likeBlog}>like</button> </div>
         <div>{blog.user.name}</div>
+        <div><button type='button' style={removeBlogButtonStyle} onClick={removeBlog}>remove</button></div>
       </div>
     </div>
   )
