@@ -38,10 +38,8 @@ test('expanded content has: url, likes and creator', () => {
 })
 
 test('expanded content is hidden by default', () => {
-  const mockHandler = jest.fn()
-
   const component = render(
-    <Blog  blog={blog} likeBlog={mockHandler} removeBlog={mockHandler} allowRemove={(mockHandler)} />
+    <Blog  blog={blog} likeBlog={() => 0} removeBlog={() => 0} allowRemove={(() => 0)} />
   )
 
   const expandedDiv = component.container.querySelector('.expanded')
@@ -49,10 +47,8 @@ test('expanded content is hidden by default', () => {
 })
 
 test('clicking "view" button shows expanded content', () => {
-  const mockHandler = jest.fn()
-
   const component = render(
-    <Blog  blog={blog} likeBlog={mockHandler} removeBlog={mockHandler} allowRemove={(mockHandler)} />
+    <Blog  blog={blog} likeBlog={() => 0} removeBlog={() => 0} allowRemove={(() => 0)} />
   )
 
   const button = component.getByText('view')
@@ -60,4 +56,17 @@ test('clicking "view" button shows expanded content', () => {
 
   const expandedDiv = component.container.querySelector('.expanded')
   expect(expandedDiv).not.toHaveStyle('display: none')
+})
+
+test('clicking "like" button twice causes event handler to be called twice', () => {
+  const mockHandler = jest.fn()
+  const component = render(
+    <Blog  blog={blog} likeBlog={mockHandler} removeBlog={() => 0} allowRemove={(() => 0)} />
+  )
+
+  const button = component.getByText('like')
+  fireEvent.click(button)
+  fireEvent.click(button)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
 })
