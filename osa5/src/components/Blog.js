@@ -27,7 +27,7 @@ const Blog = ({ blog, likeBlog, removeBlog, allowRemove }) => {
       <label type='text' id='textbox_id' onClick={viewClicked}>{blog.title} </label>
       {blog.author}
       <button type='button' onClick={viewClicked}>{ expanded ? 'hide' : 'view' }</button>
-      <div style={showWhenExpanded}>
+      <div className='expanded' style={showWhenExpanded}>
         <div>{blog.url}</div>
         <div>likes {blog.likes} <button type='button' onClick={likeBlog}>like</button> </div>
         <div>{blog.user.name}</div>
