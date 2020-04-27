@@ -44,5 +44,16 @@ describe('Blog app', function() {
         .should('have.css', 'color', 'rgb(0, 128, 0)')
       cy.contains('new title new author')
     })
+    describe.only('With existing blogs', function() {
+      beforeEach(function() {
+        cy.createBlog({ author: 'author1', title: 'title1', url: 'url1' })
+      })
+      it('A blog can be liked', function() {
+        cy.contains('title1').parent().as('blog').contains('view').click()
+        cy.get('@blog').contains('likes 0')
+        cy.get('@blog').contains('like').click()
+        cy.get('@blog').contains('likes 1')
+      })
+    })
   })
 })
