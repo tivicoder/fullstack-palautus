@@ -53,15 +53,17 @@ describe('post blogs', () => {
   })
 
   afterAll(async () => {
-    await User.deleteMany({})
+    await Blog.deleteMany({})
   })
 
   test('adding one blog is successful', async () => {
     const blogsBefore = helper.listWithManyBlogs
+
+    const token = await loginUser(testUsers[0])
     await api
       .post('/api/blogs')
       .send(newBlog)
-      .set({ Authorization: `bearer ${testUsers[0]._id}` })
+      .set({ Authorization: `bearer ${token}` })
       .expect(201)
 
     const blogsAfter = await helper.blogsInDb()
@@ -69,10 +71,11 @@ describe('post blogs', () => {
   })
 
   test('added blog has correct content', async () => {
+    const token = await loginUser(testUsers[0])
     await api
       .post('/api/blogs')
       .send(newBlog)
-      .set({ Authorization: `bearer ${testUsers[0]._id}` })
+      .set({ Authorization: `bearer ${token}` })
 
     const blogsAfter = await helper.blogsInDb()
     const addedBlog = blogsAfter.find(blog => blog.title === newBlog.title)
@@ -81,7 +84,7 @@ describe('post blogs', () => {
     expect(addedBlog.author).toBe(newBlog.author)
     expect(addedBlog.url).toBe(newBlog.url)
     expect(addedBlog.likes).toBe(newBlog.likes)
-    expect(String(addedBlog.user)).toBe(String(testUsers[0]._id))
+    expect(String(addedBlog.user)).toBe(String(testUsers[0].id))
     expect(Object.keys(addedBlog).length)
       .toBe(Object.keys(newBlog).length + 2) // including 'id' and 'user'
   })
@@ -90,10 +93,11 @@ describe('post blogs', () => {
     const newBlogWithoutLikes = { ...newBlog }
     delete newBlogWithoutLikes.likes
 
+    const token = await loginUser(testUsers[0])
     await api
       .post('/api/blogs')
       .send(newBlogWithoutLikes)
-      .set({ Authorization: `bearer ${testUsers[0]._id}` })
+      .set({ Authorization: `bearer ${token}` })
 
     const blogsAfter = await helper.blogsInDb()
     const addedBlog = blogsAfter.find(blog => blog.title === newBlogWithoutLikes.title)
@@ -105,10 +109,11 @@ describe('post blogs', () => {
     const newBlogWithoutTitle = { ...newBlog }
     delete newBlogWithoutTitle.title
 
+    const token = await loginUser(testUsers[0])
     await api
       .post('/api/blogs')
       .send(newBlogWithoutTitle)
-      .set({ Authorization: `bearer ${testUsers[0]._id}` })
+      .set({ Authorization: `bearer ${token}` })
       .expect(400)
   })
 
@@ -116,10 +121,11 @@ describe('post blogs', () => {
     const newBlogWithoutUrl = { ...newBlog }
     delete newBlogWithoutUrl.url
 
+    const token = await loginUser(testUsers[0])
     await api
       .post('/api/blogs')
       .send(newBlogWithoutUrl)
-      .set({ Authorization: `bearer ${testUsers[0]._id}` })
+      .set({ Authorization: `bearer ${token}` })
       .expect(400)
   })
 
@@ -135,14 +141,15 @@ describe('delete blogs', () => {
   test('delete returns success 204 and removes blog from database', async () => {
     // set all blogs to be created by testUsers[0]
     const blogsBefore =
-      helper.listWithManyBlogs.map(blog => ({ ...blog, user: testUsers[0]._id }))
+      helper.listWithManyBlogs.map(blog => ({ ...blog, user: testUsers[0].id }))
     await Blog.insertMany(blogsBefore)
 
     // try to delete with testUsers[0] -> SUCCESS
     const blogToRemove = blogsBefore[1]
+    const token = await loginUser(testUsers[0])
     await api
       .delete(`/api/blogs/${blogToRemove._id}`)
-      .set({ Authorization: `bearer ${testUsers[0]._id}` })
+      .set({ Authorization: `bearer ${token}` })
       .expect(204)
     const blogsAfter = await helper.blogsInDb()
 
@@ -153,14 +160,15 @@ describe('delete blogs', () => {
   test('delete fails with error 403: not allowed', async () => {
     // set all blogs to be created by testUsers[0]
     const blogsBefore =
-      helper.listWithManyBlogs.map(blog => ({ ...blog, user: testUsers[0]._id }))
+      helper.listWithManyBlogs.map(blog => ({ ...blog, user: testUsers[0].id }))
     await Blog.insertMany(blogsBefore)
 
     // try to delete with testUsers[1] -> FAIL
     const blogToRemove = blogsBefore[1]
+    const token = await loginUser(testUsers[1])
     const response = await api
       .delete(`/api/blogs/${blogToRemove._id}`)
-      .set({ Authorization: `bearer ${testUsers[1]._id}` })
+      .set({ Authorization: `bearer ${token}` })
       .expect(403)
     expect(response.body.error)
       .toMatch(/not allowed to remove blog/)
@@ -204,8 +212,10 @@ beforeAll(async () => {
   await User.deleteMany({})
 
   // create 2 users for testing authentication
-  testUsers[0] = await User.create(helper.listWithManyUsers[0])
-  testUsers[1] = await User.create(helper.listWithManyUsers[1])
+  testUsers[0] = await createUser({ username:'username1', name:'name1', password:'password1'})
+  testUsers[0].password = 'password1'
+  testUsers[1] = await createUser({ username:'username2', name:'name2', password:'password2'})
+  testUsers[1].password = 'password2'
 })
 
 beforeEach(async () => {
@@ -217,3 +227,21 @@ afterAll(async () => {
   await User.deleteMany({})
   mongoose.connection.close()
 })
+
+// return: created user
+const createUser = async ({ username, name, password }) => {
+  const response = await api
+    .post('/api/users')
+    .send({ username, name, password })
+    .expect(200)
+  return response.body
+}
+
+// return: user token
+const loginUser = async (props) => {
+  const response = await api
+    .post('/api/login')
+    .send({ username: props.username, password: props.password })
+    .expect(200)
+  return response.body.token
+}

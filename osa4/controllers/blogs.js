@@ -32,11 +32,7 @@ const getUserIdInTokenFrom = request => {
     return null
   }
 
-  if (process.env.NODE_ENV === 'test') {
-    return token
-  } else {
-    return jwt.verify(token, process.env.SECRET).id
-  }
+  return jwt.verify(token, process.env.SECRET).id
 }
 
 blogsRouter.delete('/:id', async (request, response) => {
