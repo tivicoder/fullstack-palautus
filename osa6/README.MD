@@ -1,9 +1,9 @@
 # Usage
 
-## unicafe_revisited
+## unicafe-redux
 
-Install node packages: `npm install`
+In `osa6/unicafe-redux` install node packages: `npm install`
 
-Start frontend in browser: `npm start`
+Start app in browser: `npm start`
 
 Run unit tests: `npm test`
