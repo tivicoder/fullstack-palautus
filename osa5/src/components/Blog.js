@@ -23,7 +23,7 @@ const Blog = ({ blog, likeBlog, removeBlog, allowRemove }) => {
   const showWhenExpanded = { display: expanded ? '' : 'none' }
 
   return (
-    <div style={blogStyle}>
+    <div className='blog' style={blogStyle}>
       <label type='text' id='textbox_id' onClick={viewClicked}>{blog.title} </label>
       {blog.author}
       <button type='button' onClick={viewClicked}>{ expanded ? 'hide' : 'view' }</button>

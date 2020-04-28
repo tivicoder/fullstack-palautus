@@ -39,7 +39,7 @@ Cypress.Commands.add('login', ({ username, password }) => {
   })
 })
 
-Cypress.Commands.add('createBlog', ({ author, title, url }) => {
+Cypress.Commands.add('createBlog', (blog) => {
   let token = null
   const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
   if (loggedUserJSON) {
@@ -49,10 +49,11 @@ Cypress.Commands.add('createBlog', ({ author, title, url }) => {
   cy.request( {
     method: 'POST',
     url: 'http://localhost:3001/api/blogs',
-    body: { author, title, url },
+    body: blog,
     headers: {
       authorization: `bearer ${token}`
     }
   } )
   cy.visit('http://localhost:3000')
+  cy.contains(blog.title)
 })

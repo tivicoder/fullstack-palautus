@@ -47,13 +47,16 @@ describe('Blog app', function() {
     })
     describe('With existing blogs', function() {
       beforeEach(function() {
-        cy.createBlog({ author: 'author1', title: 'title1', url: 'url1' })
+        cy.createBlog({ author: 'author1', title: 'title1', url: 'url1', likes: 4 })
+        cy.createBlog({ author: 'author2', title: 'title2', url: 'url2', likes: 7 })
+        cy.createBlog({ author: 'author3', title: 'title3', url: 'url3', likes: 2 })
       })
+
       it('A blog can be liked', function() {
         cy.contains('title1').parent().as('blog').contains('view').click()
-        cy.get('@blog').contains('likes 0')
+        cy.get('@blog').contains('likes 4')
         cy.get('@blog').contains('like').click()
-        cy.get('@blog').contains('likes 1')
+        cy.get('@blog').contains('likes 5')
       })
 
       it('User can delete blog he created', function() {
@@ -70,6 +73,15 @@ describe('Blog app', function() {
         cy.get('@blog').contains('remove').should('not.be.visible')
       })
 
+      it('Blogs are sorted by number of likes', function() {
+        cy.get('.blog')
+          .then(blogs => {
+            expect(blogs.length).to.equal(3)
+            cy.wrap(blogs[0]).contains('title2') // 7 likes
+            cy.wrap(blogs[1]).contains('title1') // 4 likes
+            cy.wrap(blogs[2]).contains('title3') // 2 likes
+          })
+      })
     })
   })
 })
