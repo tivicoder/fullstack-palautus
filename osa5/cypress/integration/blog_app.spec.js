@@ -2,6 +2,7 @@ describe('Blog app', function() {
   beforeEach(function() {
     cy.request('POST', 'http://localhost:3001/api/testing/reset')
     cy.createUser({ name:'test name', username:'test username', password:'test password' })
+    cy.createUser({ name:'test name 2', username:'test username 2', password:'test password 2' })
     cy.visit('http://localhost:3000')
   })
 
@@ -44,7 +45,7 @@ describe('Blog app', function() {
         .should('have.css', 'color', 'rgb(0, 128, 0)')
       cy.contains('new title new author')
     })
-    describe.only('With existing blogs', function() {
+    describe('With existing blogs', function() {
       beforeEach(function() {
         cy.createBlog({ author: 'author1', title: 'title1', url: 'url1' })
       })
@@ -54,6 +55,21 @@ describe('Blog app', function() {
         cy.get('@blog').contains('like').click()
         cy.get('@blog').contains('likes 1')
       })
+
+      it('User can delete blog he created', function() {
+        cy.contains('title1').parent().as('blog').contains('view').click()
+        cy.get('@blog').contains('remove').click()
+        cy.get('html').should('not.contain', 'title1')
+      })
+
+      it('User cannot delete blog someone else created', function() {
+        // logout and login with another user
+        cy.contains('logout').click()
+        cy.login({ username: 'test username 2', password: 'test password 2' })
+        cy.contains('title1').parent().as('blog').contains('view').click()
+        cy.get('@blog').contains('remove').should('not.be.visible')
+      })
+
     })
   })
 })
