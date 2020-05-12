@@ -10,7 +10,8 @@ const AnecdoteForm = () => {
     event.preventDefault()
     console.log('createNew: ', event.target.anecdote.value)
     dispatch(createAnecdote(event.target.anecdote.value))
-    dispatch(setNotification(event.target.anecdote.value))
+    dispatch(setNotification(`you created '${event.target.anecdote.value}'`))
+    setTimeout(function(){ dispatch(setNotification("")) }, 5000);
     event.target.anecdote.value = ''
   }
 
