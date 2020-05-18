@@ -10,10 +10,18 @@ const reducer = (state = null, action) => {
   }
 }
 
-export const setNotification = (anecdote) => {
-  return {
-    type: 'SET_NOTIFICATION',
-    anecdote
+export const setNotification = (anecdote, timeout) => {
+  return async dispatch => {
+    dispatch({
+      type: 'SET_NOTIFICATION',
+      anecdote
+    })
+    setTimeout(function(){
+      dispatch({
+        type: 'SET_NOTIFICATION',
+        anecdote: ""
+      })
+    }, timeout);
   }
 }
 
