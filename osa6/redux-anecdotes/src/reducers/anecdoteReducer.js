@@ -11,7 +11,7 @@ const reducer = (state = [], action) => {
       console.log('create return: ', state.concat(action.data))
       return state.concat(action.data)
     case 'VOTE':
-      return state.map(elem => elem.id === action.data.id ? { ...elem, votes:elem.votes + 1 } : elem)
+      return state.map(elem => elem.id === action.data.id ? action.data : elem)
     default:
       return state
   }
@@ -27,10 +27,13 @@ export const initializeAnecdotes = (anecdotes) => {
   }
 }
 
-export const voteAnecdote = (id) => {
-  return {
-    type: 'VOTE',
-    data: { id }
+export const voteAnecdote = (anecdote) => {
+  return async dispatch => {
+    const votedAnecdote = await anecdoteService.vote(anecdote)
+    dispatch({
+      type: 'VOTE',
+      data: votedAnecdote
+    })
   }
 }
 
