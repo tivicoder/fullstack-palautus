@@ -10,13 +10,20 @@ const reducer = (state = null, action) => {
   }
 }
 
+let timeoutId = 0
+
 export const setNotification = (anecdote, timeout) => {
   return async dispatch => {
     dispatch({
       type: 'SET_NOTIFICATION',
       anecdote
     })
-    setTimeout(function(){
+
+    if (timeoutId !== 0) {
+      clearTimeout(timeoutId)
+    }
+    timeoutId = setTimeout(function(){
+      timeoutId = 0
       dispatch({
         type: 'SET_NOTIFICATION',
         anecdote: ""
