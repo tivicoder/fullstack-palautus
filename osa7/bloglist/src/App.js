@@ -69,7 +69,7 @@ const App = () => {
   const blogFormRef = React.createRef()
 
   const addBlog = ({ title, author, url }) => {
-    dispatch(createBlog(blogs, title, author, url, user.token))
+    dispatch(createBlog(title, author, url, user.token))
     dispatch(setTimedNotification(`a new blog ${title} by ${author} added`))
     blogFormRef.current.toggleVisibility()
   }

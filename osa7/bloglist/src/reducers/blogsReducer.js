@@ -5,8 +5,12 @@ const reducer = (state = [], action) => {
   console.log('action.data', action.data)
 
   switch (action.type) {
-    case 'SET_BLOGS':
+    case 'INIT_BLOGS':
       return action.data
+    case 'ADD_BLOG': {
+      const newBlog = action.data
+      return state.concat(newBlog)
+    }
     case 'REMOVE_BLOG': {
       const id = action.data
       return state.filter(blog => blog.id !== id)
@@ -25,21 +29,21 @@ export const initBlogs = () => {
     console.log('initBlogs()')
     blogService.getAll().then(blogs =>
       dispatch({
-        type: 'SET_BLOGS',
+        type: 'INIT_BLOGS',
         data: blogs
       })
     )
   }
 }
 
-export const createBlog = (blogs, title, author, url, token) => {
+export const createBlog = (title, author, url, token) => {
   return async dispatch => {
     console.log('createBlog()')
     blogService.create(title, author, url, token)
       .then(blog => {
         dispatch({
-          type: 'SET_BLOGS',
-          data: blogs.concat(blog)
+          type: 'ADD_BLOG',
+          data: blog
         })
         console.log('Added blog: ', blog)
       })
