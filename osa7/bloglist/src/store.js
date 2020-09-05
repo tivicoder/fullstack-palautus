@@ -1,7 +1,6 @@
 import { createStore } from 'redux'
+import reducer from './reducers/notificationReducer'
 
-const notificationReducer = (state = "", action) => {
-  // ...
-}
+const store = createStore(reducer)
 
-const store = createStore(notificationReducer)
+export default store

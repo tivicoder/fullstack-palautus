@@ -6,6 +6,8 @@ import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useSelector, useDispatch } from 'react-redux'
+import { setNotification } from './reducers/notificationReducer'
 import './App.css'
 
 const App = () => {
@@ -13,8 +15,9 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState({ message:null, isError:false })
 
+  const dispatch = useDispatch()
+  const notification = useSelector(state => state)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -30,9 +33,9 @@ const App = () => {
   }, [])
 
   const setTimedNotification = (message, isError) => {
-    setNotification({ message, isError })
+    dispatch(setNotification(message, isError))
     setTimeout(() => {
-      setNotification({ message:null, isError:false })
+      dispatch(setNotification(null, isError))
     }, 5000)
   }
 
