@@ -8,21 +8,20 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
+import { initBlogs, createBlog } from './reducers/blogsReducer'
 import './App.css'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   const dispatch = useDispatch()
-  const notification = useSelector(state => state)
+  const notification = useSelector(state => state.notification)
+  const blogs = useSelector(state => state.blogs)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
+    dispatch(initBlogs())
 
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
@@ -30,7 +29,7 @@ const App = () => {
       setUser(loggedUser)
       console.log('user: ', loggedUser)
     }
-  }, [])
+  }, [dispatch])
 
   const setTimedNotification = (message, isError) => {
     dispatch(setNotification(message, isError))
@@ -78,12 +77,8 @@ const App = () => {
   const blogFormRef = React.createRef()
 
   const addBlog = ({ title, author, url }) => {
-    blogService.create(title, author, url, user.token)
-      .then(blog => {
-        setBlogs(blogs.concat(blog))
-        console.log('Added blog: ', blog)
-        setTimedNotification(`a new blog ${title} by ${author} added`)
-      })
+    dispatch(createBlog(blogs, title, author, url, user.token))
+    setTimedNotification(`a new blog ${title} by ${author} added`)
     blogFormRef.current.toggleVisibility()
   }
 
@@ -99,7 +94,8 @@ const App = () => {
         user: blog.user.id })
       .then(updatedBlog => {
         console.log('updated likes: ', updatedBlog)
-        setBlogs(blogs.map(blog => blog.id === id ? updatedBlog : blog))
+        // TODO: fix
+        // setBlogs(blogs.map(blog => blog.id === id ? updatedBlog : blog))
       })
   }
 
@@ -112,7 +108,8 @@ const App = () => {
         .remove(id, user.token)
         .then(() => {
           console.log('removed')
-          setBlogs(blogs.filter(blog => blog.id !== id))
+        // TODO: fix
+          // setBlogs(blogs.filter(blog => blog.id !== id))
         })
     }
   }
