@@ -38,4 +38,40 @@ export const createBlog = (blogs, title, author, url, token) => {
   }
 }
 
+export const increaseBlogLikes = (blogs, id) => {
+  return async dispatch => {
+    const blog = blogs.find(blog => blog.id === id)
+    blogService
+      .update(id, {
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes + 1,
+        user: blog.user.id })
+      .then(updatedBlog => {
+        console.log('updated likes: ', updatedBlog)
+        dispatch({
+          type: 'SET_BLOGS',
+          data: blogs.map(blog => blog.id === id ? updatedBlog : blog)
+        })
+      })
+
+  }
+}
+
+export const deleteBlog = (blogs, id, token) => {
+  return async dispatch => {
+    blogService
+      .remove(id, token)
+      .then(() => {
+        console.log('removed')
+        dispatch({
+          type: 'SET_BLOGS',
+          data: blogs.filter(blog => blog.id !== id)
+        })
+      })
+
+  }
+}
+
 export default reducer

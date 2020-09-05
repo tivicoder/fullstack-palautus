@@ -4,11 +4,10 @@ import FormInput from './components/FormInput'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
-import blogService from './services/blogs'
 import loginService from './services/login'
 import { useSelector, useDispatch } from 'react-redux'
 import { setTimedNotification } from './reducers/notificationReducer'
-import { initBlogs, createBlog } from './reducers/blogsReducer'
+import { initBlogs, createBlog, increaseBlogLikes, deleteBlog } from './reducers/blogsReducer'
 import './App.css'
 
 const App = () => {
@@ -77,19 +76,7 @@ const App = () => {
 
   const likeBlog = (id) => {
     console.log('Like blog clicked, id: ', id)
-    const blog = blogs.find(blog => blog.id === id)
-    blogService
-      .update(id, {
-        title: blog.title,
-        author: blog.author,
-        url: blog.url,
-        likes: blog.likes + 1,
-        user: blog.user.id })
-      .then(updatedBlog => {
-        console.log('updated likes: ', updatedBlog)
-        // TODO: fix
-        // setBlogs(blogs.map(blog => blog.id === id ? updatedBlog : blog))
-      })
+    dispatch(increaseBlogLikes(blogs, id))
   }
 
   const removeBlog = (id) => {
@@ -97,13 +84,7 @@ const App = () => {
     const blog = blogs.find(blog => blog.id === id)
     console.log('blog creator: ', blog.user.name)
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      blogService
-        .remove(id, user.token)
-        .then(() => {
-          console.log('removed')
-        // TODO: fix
-          // setBlogs(blogs.filter(blog => blog.id !== id))
-        })
+      dispatch(deleteBlog(blogs, id, user.token))
     }
   }
 
