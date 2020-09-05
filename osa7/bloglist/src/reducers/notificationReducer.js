@@ -17,10 +17,18 @@ const reducer = (state = initialState, action) => {
   }
 }
 
-export const setNotification = (message, isError) => {
-  return {
-    type: 'SET_NOTIFICATION',
-    data: { message, isError }
+export const setTimedNotification = (message, isError) => {
+  return async dispatch => {
+    dispatch({
+      type: 'SET_NOTIFICATION',
+      data: { message, isError }
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'SET_NOTIFICATION',
+        data: { message: null, isError: false }
+      })
+    }, 5000)
   }
 }
 

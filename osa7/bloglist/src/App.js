@@ -7,7 +7,7 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { useSelector, useDispatch } from 'react-redux'
-import { setNotification } from './reducers/notificationReducer'
+import { setTimedNotification } from './reducers/notificationReducer'
 import { initBlogs, createBlog } from './reducers/blogsReducer'
 import './App.css'
 
@@ -31,13 +31,6 @@ const App = () => {
     }
   }, [dispatch])
 
-  const setTimedNotification = (message, isError) => {
-    dispatch(setNotification(message, isError))
-    setTimeout(() => {
-      dispatch(setNotification(null, isError))
-    }, 5000)
-  }
-
   if (user === null) {
     const handleLogin = async (event) => {
       event.preventDefault()
@@ -52,7 +45,7 @@ const App = () => {
         setUsername('')
         setPassword('')
       } else {
-        setTimedNotification('wrong username or password', true)
+        dispatch(setTimedNotification('wrong username or password', true))
       }
     }
     return (
@@ -78,7 +71,7 @@ const App = () => {
 
   const addBlog = ({ title, author, url }) => {
     dispatch(createBlog(blogs, title, author, url, user.token))
-    setTimedNotification(`a new blog ${title} by ${author} added`)
+    dispatch(setTimedNotification(`a new blog ${title} by ${author} added`))
     blogFormRef.current.toggleVisibility()
   }
 
