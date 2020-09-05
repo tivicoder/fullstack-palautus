@@ -8,16 +8,17 @@ import loginService from './services/login'
 import { useSelector, useDispatch } from 'react-redux'
 import { setTimedNotification } from './reducers/notificationReducer'
 import { initBlogs, createBlog, increaseBlogLikes, deleteBlog } from './reducers/blogsReducer'
+import { setUser } from './reducers/userReducer'
 import './App.css'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
 
   const dispatch = useDispatch()
   const notification = useSelector(state => state.notification)
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
 
   useEffect(() => {
     dispatch(initBlogs())
@@ -25,7 +26,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const loggedUser = JSON.parse(loggedUserJSON)
-      setUser(loggedUser)
+      dispatch(setUser(loggedUser))
       console.log('user: ', loggedUser)
     }
   }, [dispatch])
@@ -39,7 +40,7 @@ const App = () => {
       })
 
       if (loginUser) {
-        setUser(loginUser)
+        dispatch(setUser(loginUser))
         window.localStorage.setItem('loggedBlogappUser', JSON.stringify(loginUser))
         setUsername('')
         setPassword('')
@@ -63,7 +64,7 @@ const App = () => {
   const logoutClicked = () => {
     console.log('clicked logout')
     window.localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
+    dispatch(setUser(null))
   }
 
   const blogFormRef = React.createRef()
