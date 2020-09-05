@@ -11,6 +11,10 @@ const reducer = (state = [], action) => {
       const id = action.data
       return state.filter(blog => blog.id !== id)
     }
+    case 'UPDATE_BLOG': {
+      const updatedBlog = action.data
+      return state.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog)
+    }
     default:
       return state
   }
@@ -42,11 +46,10 @@ export const createBlog = (blogs, title, author, url, token) => {
   }
 }
 
-export const increaseBlogLikes = (blogs, id) => {
+export const increaseBlogLikes = (blog) => {
   return async dispatch => {
-    const blog = blogs.find(blog => blog.id === id)
     blogService
-      .update(id, {
+      .update(blog.id, {
         title: blog.title,
         author: blog.author,
         url: blog.url,
@@ -55,8 +58,8 @@ export const increaseBlogLikes = (blogs, id) => {
       .then(updatedBlog => {
         console.log('updated likes: ', updatedBlog)
         dispatch({
-          type: 'SET_BLOGS',
-          data: blogs.map(blog => blog.id === id ? updatedBlog : blog)
+          type: 'UPDATE_BLOG',
+          data: updatedBlog
         })
       })
 

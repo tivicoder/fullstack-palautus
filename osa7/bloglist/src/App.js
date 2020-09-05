@@ -76,7 +76,8 @@ const App = () => {
 
   const likeBlog = (id) => {
     console.log('Like blog clicked, id: ', id)
-    dispatch(increaseBlogLikes(blogs, id))
+    const updateBlog = blogs.find(blog => blog.id === id)
+    dispatch(increaseBlogLikes(updateBlog))
   }
 
   const removeBlog = (id) => {
