@@ -84,7 +84,7 @@ const App = () => {
     const blog = blogs.find(blog => blog.id === id)
     console.log('blog creator: ', blog.user.name)
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      dispatch(deleteBlog(blogs, id, user.token))
+      dispatch(deleteBlog(id, user.token))
     }
   }
 
