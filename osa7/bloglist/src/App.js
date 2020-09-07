@@ -86,23 +86,32 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
   }
 
+  const logoutButtonStyle = {
+    backgroundColor: 'white',
+    margin: 5
+  }
+
+  const navigationBannerStyle = {
+    backgroundColor: 'lightgrey'
+  }
+
   return (
     <div>
       <Router>
-        <div>
+        <div style={navigationBannerStyle}>
           <Link style={{ padding: 5 }} to="/blogs">blogs</Link>
           <Link style={{ padding: 5 }} to="/users">users</Link>
+          {users.loggedUser.name} logged in
+          <button type="button" style={logoutButtonStyle} onClick={logoutClicked}>logout</button>
         </div>
-        <h2>Blogs</h2>
+        <h2>blog app</h2>
         <Notification message={notification.message} isError={notification.isError} />
-        {users.loggedUser.name} logged in
-        <div><button type="button" onClick={logoutClicked}>logout</button></div>
         <Switch>
           <Route path='/blogs/:id'>
             <Blog />
           </Route>
           <Route path='/blogs'>
-            <Togglable buttonLabel='new blog' ref={blogFormRef} >
+            <Togglable buttonLabel='create new' ref={blogFormRef} >
               <NewBlogForm addBlog={addBlog} />
             </Togglable>
             {[...blogs]
