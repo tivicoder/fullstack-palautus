@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogListItem from './components/BlogListItem'
 import FormInput from './components/FormInput'
 import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
@@ -9,7 +10,7 @@ import User from './components/User'
 import loginService from './services/login'
 import { useSelector, useDispatch } from 'react-redux'
 import { setTimedNotification } from './reducers/notificationReducer'
-import { initBlogs, createBlog, increaseBlogLikes, deleteBlog } from './reducers/blogsReducer'
+import { initBlogs, createBlog } from './reducers/blogsReducer'
 import { initUsers, setLoggedUser } from './reducers/userReducer'
 import {
   BrowserRouter as Router,
@@ -85,26 +86,6 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
   }
 
-  const likeBlog = (id) => {
-    console.log('Like blog clicked, id: ', id)
-    const updateBlog = blogs.find(blog => blog.id === id)
-    dispatch(increaseBlogLikes(updateBlog))
-  }
-
-  const removeBlog = (id) => {
-    console.log('Remove blog clicked, id: ', id)
-    const blog = blogs.find(blog => blog.id === id)
-    console.log('blog creator: ', blog.user.name)
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      dispatch(deleteBlog(id, users.loggedUser.token))
-    }
-  }
-
-  const allowBlogRemove = (id) => {
-    const blog = blogs.find(blog => blog.id === id)
-    return blog.user.name === users.loggedUser.name
-  }
-
   return (
     <div>
       <Router>
@@ -114,19 +95,19 @@ const App = () => {
         </div>
         <h2>Blogs</h2>
         <Notification message={notification.message} isError={notification.isError} />
-        {users.loggedUser.name} logged in <button type="button" onClick={logoutClicked}>logout</button>
+        {users.loggedUser.name} logged in
+        <div><button type="button" onClick={logoutClicked}>logout</button></div>
         <Switch>
+          <Route path='/blogs/:id'>
+            <Blog />
+          </Route>
           <Route path='/blogs'>
             <Togglable buttonLabel='new blog' ref={blogFormRef} >
-              <NewBlogForm addBlog={addBlog} likeBlog={likeBlog} />
+              <NewBlogForm addBlog={addBlog} />
             </Togglable>
             {[...blogs]
               .sort((a,b) => b.likes - a.likes)
-              .map(blog =>
-                <Blog key={blog.id} blog={blog}
-                  likeBlog={() => likeBlog(blog.id)}
-                  removeBlog={() => removeBlog(blog.id)}
-                  allowRemove={() => allowBlogRemove(blog.id)} />)
+              .map(blog => <BlogListItem key={blog.id} id={blog.id} title={blog.title} />)
             }
           </Route>
           <Route path='/users/:id'>

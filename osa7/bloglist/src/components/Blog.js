@@ -1,47 +1,58 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
+import { useParams } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { deleteBlog, increaseBlogLikes } from '../reducers/blogsReducer'
+import { useHistory } from 'react-router-dom'
 
-const Blog = ({ blog, likeBlog, removeBlog, allowRemove }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
+const Blog = () => {
+  const dispatch = useDispatch()
+  const loggedUser = useSelector(state => state.users.loggedUser)
+  const history = useHistory()
+
+  const id = useParams('id').id
+  const blogs = useSelector(state => state.blogs)
+  console.log('blogs: ', blogs)
+  const blog = blogs.find(blog => blog.id === id)
+  console.log('blog: ', blog)
+  if (!blog) {
+    return null
   }
+
+  const removeBlog = () => {
+    console.log('Remove blog clicked, id: ', id)
+    const blog = blogs.find(blog => blog.id === id)
+    console.log('blog creator: ', blog.user.name)
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      dispatch(deleteBlog(id, loggedUser.token))
+    }
+    history.push('/blogs')
+  }
+
+  const likeBlog = () => {
+    console.log('Like blog clicked, id: ', id)
+    const updateBlog = blogs.find(blog => blog.id === id)
+    dispatch(increaseBlogLikes(updateBlog))
+  }
+
+  const allowRemove = (id) => {
+    const blog = blogs.find(blog => blog.id === id)
+    return blog.user.name === loggedUser.name
+  }
+
   const removeBlogButtonStyle = {
     backgroundColor: 'dodgerblue',
-    display: allowRemove() ? '' : 'none'
+    display: allowRemove(id) ? '' : 'none'
   }
-
-  const [expanded, setExpanded] = useState(false)
-
-  const viewClicked = () => {
-    setExpanded(!expanded)
-  }
-
-  const showWhenExpanded = { display: expanded ? '' : 'none' }
 
   return (
-    <div className='blog' style={blogStyle}>
-      <label type='text' id='textbox_id' onClick={viewClicked}>{blog.title} </label>
-      {blog.author}
-      <button type='button' onClick={viewClicked}>{ expanded ? 'hide' : 'view' }</button>
-      <div className='expanded' style={showWhenExpanded}>
-        <div>{blog.url}</div>
-        <div>likes {blog.likes} <button type='button' onClick={likeBlog}>like</button> </div>
-        <div>{blog.user.name}</div>
-        <div><button type='button' style={removeBlogButtonStyle} onClick={removeBlog}>remove</button></div>
-      </div>
+    <div className='blog'>
+      <h2>{blog.title} {blog.author}</h2>
+      <a href={blog.url}>{blog.url}</a>
+      <div>{blog.likes} likes <button type='button' onClick={likeBlog}>like</button> </div>
+      <div>added by {blog.user.name}</div>
+      <div><button type='button' style={removeBlogButtonStyle} onClick={removeBlog}>remove</button></div>
     </div>
   )
-}
-
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  likeBlog: PropTypes.func.isRequired,
-  removeBlog: PropTypes.func.isRequired,
-  allowRemove: PropTypes.func.isRequired,
 }
 
 export default Blog
