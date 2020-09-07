@@ -2,6 +2,7 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const { request } = require('express')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
@@ -48,6 +49,14 @@ blogsRouter.delete('/:id', async (request, response) => {
   } else {
     return response.status(403).json({ error: 'not allowed to remove blog' })
   }
+})
+
+blogsRouter.put('/:id/comments', async (request, response) => {
+  const blog = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1, id: 1 })
+  const comment = request.body.comment
+  blog.comments.push(comment)
+  const updatedBlog = await blog.save()
+  response.json(updatedBlog.toJSON())
 })
 
 blogsRouter.put('/:id', async (request, response) => {
