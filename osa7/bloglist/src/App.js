@@ -5,6 +5,7 @@ import Notification from './components/Notification'
 import NewBlogForm from './components/NewBlogForm'
 import Togglable from './components/Togglable'
 import Users from './components/Users'
+import User from './components/User'
 import loginService from './services/login'
 import { useSelector, useDispatch } from 'react-redux'
 import { setTimedNotification } from './reducers/notificationReducer'
@@ -128,8 +129,11 @@ const App = () => {
                   allowRemove={() => allowBlogRemove(blog.id)} />)
             }
           </Route>
+          <Route path='/users/:id'>
+            <User />
+          </Route>
           <Route path='/users'>
-            <Users></Users>
+            <Users/>
           </Route>
         </Switch>
       </Router>
