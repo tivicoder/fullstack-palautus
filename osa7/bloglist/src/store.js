@@ -8,7 +8,7 @@ import thunk from 'redux-thunk'
 const reducer = combineReducers({
   notification: notificationReducer,
   blogs: blogsReducer,
-  user: userReducer
+  users: userReducer
 })
 
 const store = createStore(reducer,
