@@ -51,6 +51,8 @@ const Blog = () => {
       <div>{blog.likes} likes <button type='button' onClick={likeBlog}>like</button> </div>
       <div>added by {blog.user.name}</div>
       <div><button type='button' style={removeBlogButtonStyle} onClick={removeBlog}>remove</button></div>
+      <h3>comments</h3>
+      <ul>{[...blog.comments].map((comment, index) => <li key={index}>{comment}</li>)}</ul>
     </div>
   )
 }
