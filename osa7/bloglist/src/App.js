@@ -116,7 +116,7 @@ const App = () => {
             </Togglable>
             {[...blogs]
               .sort((a,b) => b.likes - a.likes)
-              .map(blog => <BlogListItem key={blog.id} id={blog.id} title={blog.title} />)
+              .map(blog => <BlogListItem key={blog.id} blog={blog} />)
             }
           </Route>
           <Route path='/users/:id'>

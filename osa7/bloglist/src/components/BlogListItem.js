@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const BlogListItem = ({ id, title }) => {
+const BlogListItem = ({ blog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -12,7 +12,7 @@ const BlogListItem = ({ id, title }) => {
 
   return(
     <div style={blogStyle}>
-      <Link to={`/blogs/${id}`} >{title}</Link>
+      <Link to={`/blogs/${blog.id}`} >{blog.title} {blog.author}</Link>
     </div>
   )
 }
