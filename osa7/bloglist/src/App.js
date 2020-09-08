@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setTimedNotification } from './reducers/notificationReducer'
 import { initBlogs, createBlog } from './reducers/blogsReducer'
 import { initUsers, setLoggedUser } from './reducers/userReducer'
+import { Table } from 'react-bootstrap'
 import {
   BrowserRouter as Router,
   Switch, Route, Link
@@ -96,7 +97,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <Router>
         <div style={navigationBannerStyle}>
           <Link style={{ padding: 5 }} to="/blogs">blogs</Link>
@@ -114,10 +115,14 @@ const App = () => {
             <Togglable buttonLabel='create new' ref={blogFormRef} >
               <NewBlogForm addBlog={addBlog} />
             </Togglable>
-            {[...blogs]
-              .sort((a,b) => b.likes - a.likes)
-              .map(blog => <BlogListItem key={blog.id} blog={blog} />)
-            }
+            <Table>
+              <tbody>
+                {[...blogs]
+                  .sort((a,b) => b.likes - a.likes)
+                  .map(blog => <BlogListItem key={blog.id} blog={blog} />)
+                }
+              </tbody>
+            </Table>
           </Route>
           <Route path='/users/:id'>
             <User />

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { addComment } from '../reducers/blogsReducer'
 import { useParams } from 'react-router-dom'
+import { Form, Button } from 'react-bootstrap'
 
 const NewCommentForm = () => {
   const [comment, setComment] = useState('')
@@ -17,10 +18,10 @@ const NewCommentForm = () => {
 
   return (
     <div>
-      <form onSubmit={createClicked}>
+      <Form onSubmit={createClicked}>
         <input id='comment' type='text' value={comment} onChange={({ target }) => {setComment(target.value)}} />
-        <button type='submit'>add comment</button>
-      </form>
+        <Button type='submit'>add comment</Button>
+      </Form>
     </div>
   )
 }
