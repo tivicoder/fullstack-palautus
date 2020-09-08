@@ -1,6 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
+import NewCommentForm from './NewCommentForm'
 import { deleteBlog, increaseBlogLikes } from '../reducers/blogsReducer'
 import { useHistory } from 'react-router-dom'
 
@@ -52,6 +53,7 @@ const Blog = () => {
       <div>added by {blog.user.name}</div>
       <div><button type='button' style={removeBlogButtonStyle} onClick={removeBlog}>remove</button></div>
       <h3>comments</h3>
+      <NewCommentForm />
       <ul>{[...blog.comments].map((comment, index) => <li key={index}>{comment}</li>)}</ul>
     </div>
   )

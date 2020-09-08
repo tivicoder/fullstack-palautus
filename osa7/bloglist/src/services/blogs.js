@@ -26,4 +26,10 @@ const remove = (id, token) => {
     .then(response => response)
 }
 
-export default { getAll, create, update, remove }
+const comment = (id, comment) => {
+  return axios
+    .put(`${baseUrl}/${id}/comments`, { comment })
+    .then(response => response.data)
+}
+
+export default { getAll, create, update, remove, comment }

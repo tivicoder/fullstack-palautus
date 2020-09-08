@@ -85,4 +85,19 @@ export const deleteBlog = (id, token) => {
   }
 }
 
+export const addComment = (id, comment) => {
+  return async dispatch => {
+    console.log(`addComment(${id}, ${comment})`)
+    blogService
+      .comment(id, comment)
+      .then(updatedBlog => {
+        console.log('added comment: ', updatedBlog)
+        dispatch({
+          type: 'UPDATE_BLOG',
+          data: updatedBlog
+        })
+      })
+  }
+}
+
 export default reducer
