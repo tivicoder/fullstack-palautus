@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServer, gql, UserInputError } = require('apollo-server')
 const mongoose = require('mongoose')
 const config = require('./utils/config')
 const Author = require('./models/author')
@@ -77,6 +77,17 @@ const resolvers = {
 
   Mutation: {
     addBook: async (root, args) => {
+      if (args.author.length < 4) {
+        throw new UserInputError('author minimum length 4 is characters', {
+          invalidArgs: args,
+        })
+      }
+
+      if (args.title.length < 2) {
+        throw new UserInputError('title minimum length 2 is characters', {
+          invalidArgs: args,
+        })
+      }
       let author = await Author.findOne({ name: args.author })
       if (!author) {
         author = new Author({ name: args.author })
