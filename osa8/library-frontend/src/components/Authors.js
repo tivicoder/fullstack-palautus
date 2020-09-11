@@ -1,26 +1,7 @@
 import React, { useState } from 'react'
-import { gql, useQuery, useMutation } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client'
 import Select from 'react-select'
-
-const ALL_AUTHORS = gql`
-  query {
-    allAuthors {
-      name
-      born
-      bookCount
-    }
-  }
-`
-
-const UPDATE_BORN = gql`
-  mutation editAuthor($name: String!, $setBornTo: Int!) {
-    editAuthor(name: $name, setBornTo: $setBornTo) {
-      name
-      born
-      bookCount
-    }
-  }
-`
+import { ALL_AUTHORS, UPDATE_BORN } from '../queries'
 
 const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS, { pollInterval: 2000 } )
@@ -42,8 +23,6 @@ const Authors = (props) => {
 
   const authors = result.data.allAuthors
   const authorOptions = authors.map(author => ({ value: author.name, label: author.name }))
-  console.log('authors: ', authors)
-  console.log('authorOptions: ', authorOptions)
 
   const onSubmit = (event) => {
     event.preventDefault()
