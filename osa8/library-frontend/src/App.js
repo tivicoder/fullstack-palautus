@@ -34,7 +34,7 @@ const App = () => {
 
   useEffect(() => {
     console.log('using effect')
-    setToken(localStorage.getItem('blogapp-user-token'))
+    setToken(localStorage.getItem('bookapp-user-token'))
   }, [])
 
   return (

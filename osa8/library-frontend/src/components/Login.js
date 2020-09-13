@@ -17,7 +17,7 @@ const Login = (props) => {
       console.log('result.data: ', result.data)
       const token = result.data.login.value
       props.setToken(token)
-      localStorage.setItem('blogapp-user-token', token)
+      localStorage.setItem('bookapp-user-token', token)
     }
   }, [result.data]) // eslint-disable-line
 
