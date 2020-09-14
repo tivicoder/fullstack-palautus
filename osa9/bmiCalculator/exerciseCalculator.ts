@@ -14,11 +14,27 @@ const ratingDescriptions = [
   'way to go dudemeister!'
 ];
 
-const calculateExercises = (values: Array<number>): Result => {
+interface ParsedArgs {
+  target: number;
+  values: Array<number>;
+}
+
+const parseExerciseArguments = (args: Array<string>): ParsedArgs => {
+  const target = Number(args[2]);
+  const values = args.slice(3).map(value => Number(value));
+  if (values.findIndex(value => isNaN(value)) >= 0) {
+    throw new Error('argument not a number');
+  }
+  return {
+    target,
+    values
+  };
+};
+
+const calculateExercises = (target: number, values: Array<number>): Result => {
   const periodLength = values.length;
   const trainingDays = values.filter(value => value > 0).length;
   const average = values.reduce((sum, value) => sum + value) / values.length;
-  const target = 2;
   const success = average < target ? false : true;
   let rating: number;
   if (average < target/2) {
@@ -40,4 +56,9 @@ const calculateExercises = (values: Array<number>): Result => {
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1] ));
+try {
+  const { target, values } = parseExerciseArguments(process.argv);
+  console.log(calculateExercises(target, values));
+} catch (e) {
+  console.log('something went wrong: ', e.message);
+}
