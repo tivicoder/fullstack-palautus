@@ -5,7 +5,7 @@ import BookList from './BookList'
 
 const Books = (props) => {
   const [selectedGenre, setSelectedGenre] = useState('all genres')
-  const result = useQuery(ALL_BOOKS, { pollInterval: 2000 } )
+  const result = useQuery(ALL_BOOKS)
 
   if (!props.show) {
     return null
@@ -26,7 +26,6 @@ const Books = (props) => {
   const genreClicked = ({ target }) => {
     console.log(target.value)
     setSelectedGenre(target.value)
-    result.refetch({ variables: { genre: selectedGenre } })
   }
 
   return (
