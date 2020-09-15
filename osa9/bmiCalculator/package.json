@@ -2,10 +2,10 @@
   "name": "bmicalculator",
   "version": "1.0.0",
   "description": "",
-  "main": "bmiCalculator.ts",
+  "main": "index.ts",
   "scripts": {
-    "start": "ts-node hello.ts",
-    "dev": "ts-node-dev hello.ts",
+    "start": "ts-node index.ts",
+    "dev": "ts-node-dev index.ts",
     "calculateBmi": "ts-node bmiCalculator.ts",
     "calculateExercises": "ts-node exerciseCalculator.ts",
     "lint": "eslint --ext .ts .",
