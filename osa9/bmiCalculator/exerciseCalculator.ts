@@ -60,5 +60,6 @@ try {
   const { target, values } = parseExerciseArguments(process.argv);
   console.log(calculateExercises(target, values));
 } catch (e) {
-  console.log('something went wrong: ', e.message);
+  const error = <Error> e;
+  console.log('something went wrong: ', error.message);
 }
