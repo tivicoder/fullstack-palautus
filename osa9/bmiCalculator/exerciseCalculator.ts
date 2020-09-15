@@ -1,4 +1,4 @@
-interface Result {
+interface ExerciseResult {
   periodLength: number;
   trainingDays: number;
   success: boolean;
@@ -14,24 +14,29 @@ const ratingDescriptions = [
   'way to go dudemeister!'
 ];
 
-interface ParsedArgs {
+// interface ParsedArgs {
+//   target: number;
+//   values: Array<number>;
+// }
+
+// const parseExerciseArguments = (args: Array<string>): ParsedArgs => {
+//   const target = Number(args[2]);
+//   const values = args.slice(3).map(value => Number(value));
+//   if (values.findIndex(value => isNaN(value)) >= 0) {
+//     throw new Error('argument not a number');
+//   }
+//   return {
+//     target,
+//     values
+//   };
+// };
+
+export interface ExerciseInput {
   target: number;
   values: Array<number>;
 }
 
-const parseExerciseArguments = (args: Array<string>): ParsedArgs => {
-  const target = Number(args[2]);
-  const values = args.slice(3).map(value => Number(value));
-  if (values.findIndex(value => isNaN(value)) >= 0) {
-    throw new Error('argument not a number');
-  }
-  return {
-    target,
-    values
-  };
-};
-
-const calculateExercises = (target: number, values: Array<number>): Result => {
+export const calculateExercises = ({ target, values }: ExerciseInput): ExerciseResult => {
   const periodLength = values.length;
   const trainingDays = values.filter(value => value > 0).length;
   const average = values.reduce((sum, value) => sum + value) / values.length;
@@ -56,10 +61,10 @@ const calculateExercises = (target: number, values: Array<number>): Result => {
   };
 };
 
-try {
-  const { target, values } = parseExerciseArguments(process.argv);
-  console.log(calculateExercises(target, values));
-} catch (e) {
-  const error = <Error> e;
-  console.log('something went wrong: ', error.message);
-}
+// try {
+//   const { target, values } = parseExerciseArguments(process.argv);
+//   console.log(calculateExercises({ target, values }));
+// } catch (e) {
+//   const error = <Error> e;
+//   console.log('something went wrong: ', error.message);
+// }
