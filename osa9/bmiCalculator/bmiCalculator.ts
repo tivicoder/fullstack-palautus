@@ -1,6 +1,12 @@
 const calculateBmi = (height: number, weight: number): string => {
   const bmi = 10000 * weight / height / height;
-  return (bmi > 20 && bmi < 25) ? 'Normal (healthy weight)' : 'Overweight';
+  if (bmi < 20) {
+    return 'Underweight';
+  } else if (bmi < 25) {
+    return 'Normal (healthy weight)';
+  } else {
+    return 'Overweight';
+  }
 };
 
 interface HeightWeight {
@@ -8,7 +14,7 @@ interface HeightWeight {
   weight: number;
 }
 
-const parseArguments = (args: Array<string>): HeightWeight => {
+export const parseArguments = (args: Array<string>): HeightWeight => {
   const height = Number(args[2]);
   const weight = Number(args[3]);
   if (isNaN(height) || isNaN(weight)) {
@@ -17,9 +23,12 @@ const parseArguments = (args: Array<string>): HeightWeight => {
   return { height, weight };
 };
 
-try {
-  const { height, weight } = parseArguments(process.argv);
-  console.log(calculateBmi(height, weight));
-} catch (e) {
-  console.log('something went wrong: ', e.message);
-}
+// TODO: remove
+// try {
+//   const { height, weight } = parseArguments(process.argv);
+//   console.log(calculateBmi(height, weight));
+// } catch (e) {
+//   console.log('something went wrong: ', e.message);
+// }
+
+export default calculateBmi;
