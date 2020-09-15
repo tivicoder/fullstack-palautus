@@ -1,6 +1,6 @@
 import express, { Request } from 'express';
 import { calculateBmi } from './bmi';
-import { calculateExercises } from './exerciseCalculator';
+import { calculateExercises } from './exercise';
 
 const app = express();
 app.use(express.json());
