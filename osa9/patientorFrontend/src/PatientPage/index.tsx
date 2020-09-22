@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { apiBaseUrl } from "../constants";
 import { Patient } from "../types";
 import { Header, Container, Icon } from "semantic-ui-react";
-import { useStateValue } from "../state";
+import { useStateValue, addPatient } from "../state";
 
 const genderIcon = {
   male: <Icon name='mars' />,
@@ -25,7 +25,7 @@ function PatientPage() {
         `${apiBaseUrl}/patients/${id}`
       );
       console.log('got patient: ', patientFromApi);
-      dispatch({ type: "ADD_PATIENT", payload: patientFromApi });
+      dispatch(addPatient(patientFromApi));
     };
     fetchPatientData();
 
