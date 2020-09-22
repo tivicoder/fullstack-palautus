@@ -8,22 +8,22 @@ export interface DiagnoseEntry {
 export interface Entry {
 }
 
-export interface PatientEntry {
-  id: string;
-  name: string;
-  dateOfBirth: string;
-  ssn: string;
-  gender: string;
-  occupation: string;
-  entries: Entry[];
-}
-
-export type NewPatientEntry = Omit<PatientEntry, 'id'>;
-export type NonSensitivePatientEntry = Omit<PatientEntry, 'ssn'>;
-export type PublicPatient = Omit<PatientEntry, 'ssn' | 'entries' >;
-
 export enum Gender {
   'male',
   'female',
   'other'
 }
+
+export interface Patient {
+  id: string;
+  name: string;
+  dateOfBirth: string;
+  ssn: string;
+  gender: Gender;
+  occupation: string;
+  entries: Entry[];
+}
+
+export type NewPatientEntry = Omit<Patient, 'id'>;
+export type NonSensitivePatientEntry = Omit<Patient, 'ssn'>;
+export type PublicPatient = Omit<Patient, 'ssn' | 'entries' >;
