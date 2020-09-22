@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { apiBaseUrl } from "../constants";
-import { Patient } from "../types";
+import { Patient, Entry } from "../types";
 import { Header, Container, Icon } from "semantic-ui-react";
 import { useStateValue, addPatient } from "../state";
 
@@ -11,6 +11,22 @@ const genderIcon = {
   female: <Icon name='venus' />,
   other: <Icon name='mars' />,
 };
+
+function Entries({ entries }: {entries: Entry[]}) {
+  return(
+    <div style={{ marginTop: 30 }}>
+      <Header as="h3">entries</Header>
+      { entries.map(entry => (
+        <div key={entry.id} >
+          {entry.date} {entry.description}
+          <ul>
+            {entry.diagnosisCodes ? entry.diagnosisCodes.map(code => (<li key={code}>{code}</li>)) : '' }
+          </ul>
+        </div>
+      )) }
+    </div>
+  );
+}
 
 function PatientPage() {
   const { id } = useParams<{ id: string }>();
@@ -37,6 +53,7 @@ function PatientPage() {
       <Header as="h2">{patient.name} {genderIcon[patient.gender]}</Header>
       <Container>ssn: {patient.ssn} </Container>
       <Container>occupation: {patient.occupation}</Container>
+      <Entries entries={patient.entries} />
     </div>
   );
 }
