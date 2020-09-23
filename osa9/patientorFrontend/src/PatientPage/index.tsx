@@ -10,7 +10,7 @@ import Entries from './Entries';
 const genderIcon = {
   male: <Icon name='mars' />,
   female: <Icon name='venus' />,
-  other: <Icon name='mars' />,
+  other: <Icon name='genderless' />,
 };
 
 function PatientPage() {
