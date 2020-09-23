@@ -1,6 +1,7 @@
 import express from 'express';
 import patientService from '../services/patientService';
-import { toNewPatientEntry } from '../utils';
+import { toNewPatientEntry, toNewEntry } from '../utils';
+import { NewEntry, Entry } from '../types';
 
 const router = express.Router();
 
@@ -23,6 +24,21 @@ router.post('/', (req, res) => {
   try {
     const newPatientEntry = patientService.addPatient(toNewPatientEntry(req.body));
     res.json(newPatientEntry);
+  } catch (e) {
+    if (!(e instanceof Error)){
+      throw new Error('wrong error type');
+    }
+    res.status(400).send(e.message);
+  }
+});
+
+router.post('/:id/entries', (req, res) => {
+  const userId = req.params.id;
+  console.log(`POST /${userId}/entries body:`, req.body);
+  try {
+    const newEntry: NewEntry = toNewEntry(req.body);
+    const addedEntry: Entry = patientService.addEntry(userId, newEntry);
+    res.json(addedEntry);
   } catch (e) {
     if (!(e instanceof Error)){
       throw new Error('wrong error type');

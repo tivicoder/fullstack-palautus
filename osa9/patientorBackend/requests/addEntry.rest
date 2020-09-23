@@ -1,0 +1,12 @@
+POST http://localhost:3001/api/patients/ID_HERE/entries
+Content-Type: application/json
+
+{
+  "description": "Great description",
+  "date": "2020-01-16",
+  "specialist": "Great specialist",
+  "diagnosisCodes": ["foo", "bar"],
+  "type": "OccupationalHealthcare",
+  "employerName": "some employer",
+  "sickLeave": "anything. Not yet checked"
+}
