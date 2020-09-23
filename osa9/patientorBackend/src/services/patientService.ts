@@ -23,12 +23,17 @@ const addPatient = (data: NewPatientEntry): Patient => {
   return newEntry;
 };
 
-const addEntry = (_userId: string, data: NewEntry): Entry => {
+const addEntry = (userId: string, data: NewEntry): Entry => {
+  const patient = patients.find(patient => patient.id === userId);
+  if (!patient) {
+    throw new Error(`Could not find patient with id ${userId}`);
+  }
   const addedEntry: Entry = {
     ...data,
     id: uuid()
   };
 
+  patient.entries.push(addedEntry);
   return addedEntry;
 };
 
