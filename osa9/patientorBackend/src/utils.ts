@@ -25,11 +25,11 @@ const parseSsn = (ssn: unknown): string => {
   return ssn;
 };
 
-const parseGender = (gender: unknown) => {
-  if (!isString(gender) || !Object.values(Gender).includes(gender)) {
+const parseGender = (gender: unknown): Gender => {
+  if (!Object.values(Gender).includes(gender as Gender)) {
     throw new Error('gender not given or invalid');
   }
-  return gender;
+  return gender as Gender;
 };
 
 const parseOccupation = (occupation: unknown): string => {
