@@ -2,35 +2,16 @@ import React from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { apiBaseUrl } from "../constants";
-import { Patient, Entry } from "../types";
+import { Patient } from "../types";
 import { Header, Container, Icon } from "semantic-ui-react";
 import { useStateValue, addPatient } from "../state";
+import Entries from './Entries';
 
 const genderIcon = {
   male: <Icon name='mars' />,
   female: <Icon name='venus' />,
   other: <Icon name='mars' />,
 };
-
-function Entries({ entries }: {entries: Entry[]}) {
-  const [{ diagnoses }] = useStateValue();
-
-  return(
-    <div style={{ marginTop: 30 }}>
-      <Header as="h3">entries</Header>
-      { entries.map(entry => (
-        <div key={entry.id} >
-          {entry.date} {entry.description}
-          <ul>
-            {entry.diagnosisCodes
-              ? entry.diagnosisCodes.map(code => (<li key={code}>{code} {diagnoses[code].name}</li>))
-              : '' }
-          </ul>
-        </div>
-      )) }
-    </div>
-  );
-}
 
 function PatientPage() {
   const { id } = useParams<{ id: string }>();
