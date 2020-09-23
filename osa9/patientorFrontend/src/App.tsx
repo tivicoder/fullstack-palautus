@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import { Button, Divider, Header, Container } from "semantic-ui-react";
 
 import { apiBaseUrl } from "./constants";
-import { useStateValue, setPatientList } from "./state";
-import { Patient } from "./types";
+import { useStateValue, setPatientList, setDiagnosesList } from "./state";
+import { Patient, Diagnosis } from "./types";
 
 import PatientListPage from "./PatientListPage";
 import PatientPage from "./PatientPage";
@@ -15,7 +15,7 @@ const App: React.FC = () => {
   React.useEffect(() => {
     axios.get<void>(`${apiBaseUrl}/ping`);
 
-    const fetchPatientList = async () => {
+    const fetchPatientAndDiagnosesLists = async () => {
       try {
         console.log(`FETCHING ${apiBaseUrl}/patients`); 
         const { data: patientListFromApi } = await axios.get<Patient[]>(
@@ -23,11 +23,19 @@ const App: React.FC = () => {
         );
         dispatch(setPatientList(patientListFromApi));
         console.log('Got patient list: ', patientListFromApi);
+
+        console.log(`FETCHING ${apiBaseUrl}/diagnoses`); 
+        const { data: diagnosesListFromApi } = await axios.get<Diagnosis[]>(
+          `${apiBaseUrl}/diagnoses`
+        );
+        dispatch(setDiagnosesList(diagnosesListFromApi));
+        console.log('Got diagnoses list: ', diagnosesListFromApi);
       } catch (e) {
         console.error(e);
       }
     };
-    fetchPatientList();
+
+    fetchPatientAndDiagnosesLists();
   }, [dispatch]);
 
   return (

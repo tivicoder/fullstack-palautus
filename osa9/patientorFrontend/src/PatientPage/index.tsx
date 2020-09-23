@@ -13,6 +13,8 @@ const genderIcon = {
 };
 
 function Entries({ entries }: {entries: Entry[]}) {
+  const [{ diagnoses }] = useStateValue();
+
   return(
     <div style={{ marginTop: 30 }}>
       <Header as="h3">entries</Header>
@@ -20,7 +22,9 @@ function Entries({ entries }: {entries: Entry[]}) {
         <div key={entry.id} >
           {entry.date} {entry.description}
           <ul>
-            {entry.diagnosisCodes ? entry.diagnosisCodes.map(code => (<li key={code}>{code}</li>)) : '' }
+            {entry.diagnosisCodes
+              ? entry.diagnosisCodes.map(code => (<li key={code}>{code} {diagnoses[code].name}</li>))
+              : '' }
           </ul>
         </div>
       )) }
