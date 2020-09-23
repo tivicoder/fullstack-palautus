@@ -21,8 +21,7 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
   console.log('POST body:', req.body);
   try {
-    const newPatientEntry = toNewPatientEntry(req.body);
-    patientService.addPatient(newPatientEntry);
+    const newPatientEntry = patientService.addPatient(toNewPatientEntry(req.body));
     res.json(newPatientEntry);
   } catch (e) {
     if (!(e instanceof Error)){
