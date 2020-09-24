@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { apiBaseUrl } from "../constants";
 import { Patient, Entry } from "../types";
 import { Header, Container, Icon, Button } from "semantic-ui-react";
-import { useStateValue, addPatient, addEntry } from "../state";
+import { useStateValue, updatePatient, addEntry } from "../state";
 import Entries from './Entries';
 import AddEntryModal from '../AddEntryModal';
 import { EntryFormValues } from '../AddEntryModal/AddEntryForm';
@@ -29,8 +29,8 @@ function PatientPage() {
       const { data: patientFromApi } = await axios.get<Patient>(
         `${apiBaseUrl}/patients/${id}`
       );
-      console.log('got patient: ', patientFromApi);
-      dispatch(addPatient(patientFromApi));
+      console.log('got updated patient: ', patientFromApi);
+      dispatch(updatePatient(patientFromApi));
     };
     fetchPatientData();
 

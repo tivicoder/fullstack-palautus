@@ -11,6 +11,10 @@ export type Action =
       payload: Patient;
     }
   | {
+    type: "UPDATE_PATIENT";
+    payload: Patient;
+    }
+  | {
     type: "ADD_ENTRY";
     payload: {
       patientId: string;
@@ -35,6 +39,9 @@ export const reducer = (state: State, action: Action): State => {
           ...state.patients
         }
       };
+    case "UPDATE_PATIENT":
+      // Looks like same as ADD_PATIENT
+    // eslint-disable-next-line no-fallthrough
     case "ADD_PATIENT":
       return {
         ...state,
@@ -80,6 +87,13 @@ export const addPatient = (newPatient: Patient): Action => {
   return({
     type: "ADD_PATIENT",
     payload: newPatient
+  });
+};
+
+export const updatePatient = (patient: Patient): Action => {
+  return({
+    type: "UPDATE_PATIENT",
+    payload: patient
   });
 };
 
