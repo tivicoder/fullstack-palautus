@@ -65,3 +65,7 @@ export interface Patient {
 export type NewPatientEntry = Omit<Patient, 'id'>;
 export type NonSensitivePatientEntry = Omit<Patient, 'ssn'>;
 export type PublicPatient = Omit<Patient, 'ssn' | 'entries' >;
+
+//https://stackoverflow.com/questions/57103834/typescript-omit-a-property-from-all-interfaces-in-a-union-but-keep-the-union-s
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
